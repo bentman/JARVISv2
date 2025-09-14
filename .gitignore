@@ -123,12 +123,16 @@ celerybeat.pid
 
 # Environment variables
 .env
-.env.*
-.venv
+.env/
 env/
-venv/
 ENV/
 env.bak/
+.env.*
+
+# Python virtual environments
+.venv
+.venv/
+venv/
 venv.bak/
 
 # Spyder project settings
