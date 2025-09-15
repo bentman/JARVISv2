@@ -21,8 +21,8 @@ The top-level subfolders represent discrete efforts and experiments. Short summa
 - `OpenAiAssist`: Local Flask + SocketIO voice assistant scaffolder. Provides `run_assistant.py` which generates a venv, a small Flask backend, and docker-compose helpers. Status: scaffold and local demo generator.
 - `OpenHands`: Docker Compose integration for the OpenHands autonomous agent, with multiple Ollama services defined for planning/code/exec models. Status: integration playbook for OpenHands and local models.
 - `WebApps`: Two Web Application Concepts
- - `Bolt`: [Bolt.new](https://bolt.new/) & [bolt.diy](https://github.com/stackblitz-labs/bolt.diy/tree/main) - "an AI-powered builder for websites, web apps, and mobile apps"
- - `MGX`: [MGX.dev](https://mgx.dev/) - "chat with AI to build and deploy websites, blogs, dashboards, tools"
+ 1. `Bolt`: [Bolt.new](https://bolt.new/) & [bolt.diy](https://github.com/stackblitz-labs/bolt.diy/tree/main) - "an AI-powered builder for websites, web apps, and mobile apps"
+ -2. `MGX`: [MGX.dev](https://mgx.dev/) - "chat with AI to build and deploy websites, blogs, dashboards, tools"
 
 Other files:
 - `Project.md`: high-level notes and setup guidance for developers.
