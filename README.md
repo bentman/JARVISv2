@@ -40,7 +40,7 @@ Status note: these modules are experiments and partial integrations. If you are 
 ### Noteworthy GitHub References
 - `AGENT`: [AGENT.base.md](https://gist.github.com/artpar/60a3c1edfe752450e21547898e801bb7) - Unique approach to AI agent instructions.
 - `Cline`: [Cline.bot](https://cline.bot/) - MCP Orchestrator with VSCode Plugin
-- `Lobe`: [LobChat](https://lobechat.com/) & [LobeHub](https://github.com/lobehub/lobe-chat)
+- `Lobe`: [LobChat](https://lobechat.com/) & [LobeHub](https://github.com/lobehub/lobe-chat) - An open-source, modern design ChatGPT/LLMs UI/framework.
 - `NeuralAgent`: [neuralagent](https://github.com/mosdehcom/neuralagent) - Windows Desktop Assistant
 - `PrivateAI-Agent`: [PrivateAI-Agent](https://github.com/privateai-com/PrivateAI-Agent) - Windows Desktop AI Assistant
 - `LibreChat`: [private-ai](https://github.com/andreaswittmann/private-ai) - Desktop AI Assistant
