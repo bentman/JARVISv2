@@ -37,7 +37,7 @@ Status note: these modules are experiments and partial integrations. If you are 
 - Cross-platform testing and compatibility fixes
 - Documentation improvements
 
-## Noteworthy GitHub References
+### Noteworthy GitHub References
 - `AGENT`: [AGENT.base.md](https://gist.github.com/artpar/60a3c1edfe752450e21547898e801bb7) - Unique approach to AI agent instructions.
 - `Cline`: [Cline.bot](https://cline.bot/) - MCP Orchestrator with VSCode Plugin
 - `Lobe`: [LobChat](https://lobechat.com/) & [LobeHub](https://github.com/lobehub/lobe-chat)
