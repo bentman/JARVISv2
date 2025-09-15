@@ -1,0 +1,44 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    image: assistant-backend:latest
+    container_name: assistant-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      # Mount a volume for persistent logs and SQLite DB
+      - ./backend/data:/app/data
+      # Mount the Docker socket to communicate with DMR on the host
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DB_PATH=/app/data/memory.sqlite
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    networks:
+      - assistant-network
+
+  redis:
+    image: "redis:7-alpine"
+    container_name: assistant-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - assistant-network
+
+  frontend-dev:
+    build:
+      context: ./frontend
+    image: assistant-frontend-dev:latest
+    container_name: assistant-frontend-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app/frontend
+    networks:
+      - assistant-network
+
+networks:
+  assistant-network:
+    driver: bridge

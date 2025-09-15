@@ -1,0 +1,67 @@
+services:
+  # Init containers - pull models and exit
+  init-qwencode:
+    image: ollama/ollama:latest
+    volumes:
+      - qwencode_data:/root/.ollama
+    networks:
+      - agent-net
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 15 && ollama pull qwen2.5-coder:7b && kill %1 && wait"]
+
+  # Main Ollama services - models already available
+  qwencode:
+    image: ollama/ollama:latest
+    ports:
+      - "11002:11434"
+    volumes:
+      - qwencode_data:/root/.ollama
+    networks:
+      - agent-net
+    environment:
+      - OLLAMA_API=ollama
+      - OLLAMA_GPU_OVERHEAD=0
+      - OLLAMA_MAX_LOADED_MODELS=1
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_FLASH_ATTENTION=1
+    deploy:
+      resources:
+        limits:
+          memory: ${QWENCODE_MEMORY}
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: ["ollama", "serve"]
+    depends_on:
+      init-qwencode:
+        condition: service_completed_successfully
+
+# Orchestrator removed - not needed for single model setup
+
+  # Aider - depends on primary model service
+  aider:
+    image: paulgauthier/aider-full:latest
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    networks:
+      - agent-net
+    tty: true
+    stdin_open: true
+    environment:
+      - OPENAI_API_BASE=http://qwencode:11434/v1
+      - OPENAI_API_KEY=ollama
+      - STREAMLIT_SERVER_PORT=8501
+    entrypoint: ["/bin/bash", "-c", "cd /app && if [ ! -d .git ]; then git init && git config user.email 'bmwcell@gmail.com' && git config user.name 'bentman'; fi && aider --model ollama/qwen2.5-coder:7b --no-show-model-warnings"]
+    depends_on:
+      - qwencode
+
+volumes:
+  qwencode_data:
+
+networks:
+  agent-net:
+    driver: bridge

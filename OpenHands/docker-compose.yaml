@@ -1,0 +1,134 @@
+version: "3.8"
+
+networks:
+  ai:
+    name: openhands
+
+volumes:
+  openhands_state:
+  ollama_data:
+
+services:
+  plan-llm:
+    image: ollama/ollama:latest
+    container_name: plan-llm
+    pull_policy: always
+    networks: [ai]
+    ports:
+      - "11001:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_NUM_PARALLEL=1
+    gpus: all
+    entrypoint: ["/bin/sh", "-lc"]
+    command: |
+      set -e
+      ollama serve & pid=$!
+      until ollama ps >/dev/null 2>&1; do sleep 1; done
+      ollama pull llama3.1:8b-instruct-q4_0 || true
+      wait $pid
+    healthcheck:
+      test: ["CMD", "sh", "-lc", "ollama ps >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+
+  code-llm:
+    image: ollama/ollama:latest
+    container_name: code-llm
+    pull_policy: always
+    networks: [ai]
+    ports:
+      - "11002:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_NUM_PARALLEL=1
+    gpus: all
+    entrypoint: ["/bin/sh", "-lc"]
+    command: |
+      set -e
+      ollama serve & pid=$!
+      until ollama ps >/dev/null 2>&1; do sleep 1; done
+      ollama pull qwen2.5-coder:7b-instruct-q4_0 || true
+      wait $pid
+    healthcheck:
+      test: ["CMD", "sh", "-lc", "ollama ps >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+
+  exec-llm:
+    image: ollama/ollama:latest
+    container_name: exec-llm
+    pull_policy: always
+    networks: [ai]
+    ports:
+      - "11003:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_NUM_PARALLEL=1
+    gpus: all
+    entrypoint: ["/bin/sh", "-lc"]
+    command: |
+      set -e
+      ollama serve & pid=$!
+      until ollama ps >/dev/null 2>&1; do sleep 1; done
+      ollama pull qwen2.5:7b-instruct-q4_0 || true
+      wait $pid
+    healthcheck:
+      test: ["CMD", "sh", "-lc", "ollama ps >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+
+  openhands:
+    image: docker.all-hands.dev/all-hands-ai/openhands:0.54
+    container_name: openhands-app
+    pull_policy: always
+    networks: [ai]
+    ports:
+      - "3000:3000"
+    environment:
+      - SANDBOX_RUNTIME_CONTAINER_IMAGE=docker.all-hands.dev/all-hands-ai/runtime:0.54-nikolaik
+      - LOG_ALL_EVENTS=true
+      - WORKSPACE_MOUNT_PATH=/opt/workspace_base
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - openhands_state:/.openhands
+      - ~/workspace:/opt/workspace_base:rw
+    depends_on:
+      plan-llm:
+        condition: service_healthy
+      code-llm:
+        condition: service_healthy
+      exec-llm:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped

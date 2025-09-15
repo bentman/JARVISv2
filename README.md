@@ -46,9 +46,9 @@ Hybrid Assistant Client is a cross-platform desktop application that runs AI mod
 
 ## 📋 Development Status
 
-This project is currently under active development. See [project_progress.md](project_progress.md) for detailed phase breakdowns and current implementation status.
+This repository contains several parallel, experimental attempts at building a local-first, hardware-aware AI assistant. Each subfolder is an independent prototype or integration effort — some have partial, runnable pieces (containers, frontends, scripts), but there is no single, finished application in this repo.
 
-### Current Phase: Project Setup & Infrastructure
+### Current Phase: Collection of Prototypes and Experiments
 
 ## 🚀 Getting Started
 
@@ -76,14 +76,14 @@ This project is currently under active development. See [project_progress.md](pr
    npm run tauri dev
    ```
 
-Detailed development environment setup and troubleshooting guides are available in [project.md](Project.md).
+Detailed development environment setup and troubleshooting guides are available in `Project.md` and in the subfolder READMEs where present. The folders below are brief summaries of what you'll find in this repository — treat them as experimental modules rather than a single coherent product.
 
 ## 🤝 Contributing
 
 We welcome contributions from the community! This is a complex cross-platform project that could benefit from expertise in AI/ML, Rust, desktop applications, and hardware optimization.
 
 ### Getting Started for Contributors
-1. Review the [Project Overview](Project.md) and current status in [project_progress.md](project_progress.md)
+1. Review the `Project.md` overview and the README files inside each subfolder
 2. Set up your development environment following the setup guide
 3. Check out active issues and discussions for contribution ideas
 4. Join our discussions to align on priority features
@@ -94,7 +94,23 @@ We welcome contributions from the community! This is a complex cross-platform pr
 - Create feature branches for changes and submit pull requests
 - All major changes should update project_progress.md with course corrections
 
-### Areas for Contributions
+### Repository Layout & Per-Module Summary
+
+The top-level subfolders represent discrete efforts and experiments. Short summaries follow; see each folder for its own README and run instructions.
+
+- `Aider`: Docker-based agentic coding environment integrating Ollama models and the Aider web UI. Comes with `docker-compose.yaml`, an orchestrator FastAPI service (`Aider/orchestrator/orchestrator.py`), and a detailed `runbook.md`. Status: working prototype for local model + Aider integration (model downloads and container orchestration handled via Compose).
+- `ClaudeAssist`: A full local-first assistant build with a Tauri + React frontend and a Rust backend. Contains `frontend/` and `backend/` code, `docker-compose.yaml`, and platform scripts (`start.sh`, `start.bat`). Status: advanced prototype with platform-specific build scripts and hardware-aware configuration.
+- `GeminiAssist`: Lightweight Docker scaffold (backend + redis + frontend-dev). Contains a `docker-compose.yml` and a small backend. Status: scaffold / early prototype.
+- `GrokAssistMMP`: Minimal Docker setup to run Ollama plus a small backend. Contains `docker-compose.yml` under `GrokAssistMMP`. Status: small integration prototype.
+- `GrokAssistMVP`: Single-file application-style assistant (`run.py`) with many convenience helpers and bootstrap logic for Ollama, voice I/O, and a tiny verification script. Status: proof-of-concept; contains assistive UI and bootstrap installer logic but is not a finished product.
+- `OpenAiAssist`: Local Flask + SocketIO voice assistant scaffolder. Provides `run_assistant.py` which generates a venv, a small Flask backend, and docker-compose helpers. Status: scaffold and local demo generator.
+- `OpenHands`: Docker Compose integration for the OpenHands autonomous agent, with multiple Ollama services defined for planning/code/exec models. Status: integration playbook for OpenHands and local models.
+
+Other files:
+- `Project.md`: high-level notes and setup guidance for developers.
+- `LICENSE`: project license (MIT).
+
+Status note: these modules are experiments and partial integrations. If you are exploring this repository, pick a subfolder that matches your needs (for example, `Aider` for an agentic coding UI or `ClaudeAssist` for a Tauri-based desktop assistant) and follow the folder-specific README/runbooks.
 - Hardware detection optimization for specific platforms
 - Speech processing improvements and model fine-tuning
 - UI/UX enhancements and accessibility features
