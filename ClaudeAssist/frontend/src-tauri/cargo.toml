@@ -1,0 +1,60 @@
+[package]
+name = "ai-assistant-frontend"
+version = "0.1.0"
+description = "Local-first AI Assistant"
+authors = ["AI Assistant Team"]
+license = "MIT"
+repository = ""
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+# Tauri Core - Desktop app functionality
+tauri = { version = "1.5", features = ["shell-open", "system-tray", "dialog-all", "fs-all", "path-all", "process-all", "window-all", "clipboard-all", "global-shortcut-all"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# API Client - Backend communication
+reqwest = { version = "0.11", features = ["json", "stream", "multipart", "gzip", "brotli"] }
+
+# Error handling and logging
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# Utilities
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Audio I/O only - Frontend handles capture/playback, backend does processing
+rodio = "0.17"      # Audio playback (for TTS output from backend)
+cpal = "0.15"       # Cross-platform audio capture (microphone input)
+hound = "3.5"       # WAV file handling for audio format conversion
+
+# Hardware Detection - Match backend for UI display purposes
+sysinfo = "0.30"    # System information (same version as backend)
+num_cpus = "1.16"   # CPU detection
+
+# Optional: GPU detection for UI display
+nvml-wrapper = { version = "0.9", optional = true }  # NVIDIA GPU
+
+# Base64 for audio encoding when sending to backend
+base64 = "0.21"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+nvidia = ["nvml-wrapper"]  # Enable NVIDIA GPU detection
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

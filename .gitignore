@@ -2,18 +2,12 @@
 
 # AI Project Instructions 
 instructions.md
-claude.md
-grok.md
-gemini.md
-codex.md
 
 # ===== PROJECT SPECIFIC EXCLUSIONS =====
 # PowerShell run scripts
 run_*.ps1
 
 # Backend and Frontend directories (completely excluded)
-backend/
-frontend/
 
 # ===== PYTHON/FASTAPI BACKEND =====
 # Byte-compiled / optimized / DLL files
@@ -127,6 +121,7 @@ env/
 ENV/
 env.bak/
 .env.*
+!.env.hardware
 
 # Python virtual environments
 .venv
