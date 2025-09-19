@@ -21,7 +21,7 @@ The Local AI Assistant is a privacy-focused, local-first AI assistant that runs 
      - Heavy (High-end GPU): 13B+ parameter models
 
 3. **Voice Interaction**
-   - Wake Word Detection: Hands-free activation
+   - Wake Word Detection: Hands-free activation (planned for local implementation)
    - Speech-to-Text: Accurate voice recognition
    - Text-to-Speech: Natural voice responses
    - Real-time Processing: Low-latency voice interaction
@@ -77,8 +77,8 @@ local-ai-assistant/
 ├── models/               # AI models and related files
 ├── docker-compose.yml    # Service orchestration
 ├── README.md             # Project documentation
-├── INSTALLATION.md       # Installation guide
-├── DEPLOYMENT.md         # Deployment guide
+├── Project_Components.md # Installation, setup, and quick start guide
+├── Project_Detail.md     # Comprehensive project overview, plan, and implementation details
 └── TESTING.md            # Testing and optimization plan
 ```
 
@@ -180,13 +180,17 @@ Run tests with: `make test` or individually with `make test-backend` and `make t
 ## Key Documentation Files
 
 1. `README.md` - Project overview and quick start
-2. `INSTALLATION.md` - Detailed installation guide
-3. `DEPLOYMENT.md` - Deployment and configuration
+2. `Project_Components.md` - Installation, setup, and quick start guide
+3. `Project_Detail.md` - Comprehensive project overview, plan, and implementation details
 4. `TESTING.md` - Testing strategies and optimization
-5. `PROJECT_PLAN.md` - Complete project plan and timeline
-6. `SUMMARY.md` - Project summary and implementation status
 
-## Future Enhancements
+## Future Development Tasks
+
+### Immediate Priorities
+1. Implement local wake word detection (replacing placeholder)
+2. Complete voice interaction integration
+3. Optimize model loading and inference performance
+4. Enhance privacy features with more granular controls
 
 ### Short-term Goals
 1. Model fine-tuning with LoRA
