@@ -91,7 +91,7 @@ The Local AI Assistant is a cutting-edge AI application that provides chat, voic
 ### AI Models
 - **Chat Models**: Llama 3.2, Mistral 7B, Llama 3.3
 - **Voice Models**: Whisper (STT), Piper (TTS)
-- **Wake Word**: Porcupine
+- **Wake Word**: Planned for local implementation (currently in development)
 - **Model Format**: GGUF for optimal local performance
 
 ## 📁 Project Structure
