@@ -70,7 +70,7 @@ The Local AI Assistant is a cutting-edge AI application that provides chat, voic
 │  │   LLM       │  │   Voice     │  │  Hardware-          │  │
 │  │  Inference  │  │  Models     │  │  Optimized          │  │
 │  └─────────────┘  └─────────────┘  │  Execution          │  │
-│                                   └─────────────────────┘  │
+│                                    └─────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -97,7 +97,7 @@ The Local AI Assistant is a cutting-edge AI application that provides chat, voic
 ## 📁 Project Structure
 
 ```
-local-ai-assistant/
+qwenassistant/
 ├── backend/              # FastAPI backend services
 │   ├── app/              # Main application code
 │   │   ├── api/          # API endpoints
@@ -163,8 +163,8 @@ local-ai-assistant/
 
 1. **Clone the repository**:
 ```bash
-git clone https://github.com/your-org/local-ai-assistant.git
-cd local-ai-assistant
+git clone https://github.com/bentman/JARVISv2.git
+cd JARVISv2/qwenassistant
 ```
 
 2. **Start backend services**:
@@ -234,11 +234,11 @@ Complete voice interface with:
 
 ## 📖 Documentation
 
-- [INSTALLATION.md](INSTALLATION.md) - Detailed installation instructions
-- [DEPLOYMENT.md](DEPLOYMENT.md) - Deployment and configuration guide
-- [TESTING.md](TESTING.md) - Testing strategies and optimization plan
-- [PROJECT_PLAN.md](PROJECT_PLAN.md) - Comprehensive project plan
-- [SUMMARY.md](SUMMARY.md) - Project summary and implementation details
+- [qwenassistant/INSTALLATION.md](INSTALLATION.md) - Detailed installation instructions
+- [qwenassistant/DEPLOYMENT.md](DEPLOYMENT.md) - Deployment and configuration guide
+- [qwenassistant/TESTING.md](TESTING.md) - Testing strategies and optimization plan
+- [qwenassistant/PROJECT_PLAN.md](PROJECT_PLAN.md) - Comprehensive project plan
+- [qwenassistant/SUMMARY.md](SUMMARY.md) - Project summary and implementation details
 
 ## 🧪 Testing
 
