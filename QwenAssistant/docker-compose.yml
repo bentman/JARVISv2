@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./models:/models
+    environment:
+      - DATABASE_URL=sqlite:///./data/local_ai.db
+      - MODEL_PATH=/models
+    restart: unless-stopped

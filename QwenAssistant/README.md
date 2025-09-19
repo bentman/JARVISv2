@@ -26,9 +26,9 @@ The Local AI Assistant is a cutting-edge AI application that provides chat, voic
   - Heavy (High-end GPU): 13B+ parameter models
 
 ### 🎙️ Voice Interaction
-- **Wake Word Detection**: Hands-free activation ("Hey assistant")
-- **Speech-to-Text**: Accurate voice recognition with Whisper
-- **Text-to-Speech**: Natural voice responses with Piper
+- **Wake Word Detection**: Hands-free activation
+- **Speech-to-Text**: Accurate voice recognition
+- **Text-to-Speech**: Natural voice responses
 - **Real-time Processing**: Low-latency voice interaction
 
 ### 💬 Rich Chat Interface
@@ -101,54 +101,23 @@ local-ai-assistant/
 ├── backend/              # FastAPI backend services
 │   ├── app/              # Main application code
 │   │   ├── api/          # API endpoints
-│   │   │   └── v1/       # API version 1
-│   │   │       ├── endpoints/  # Individual endpoint handlers
-│   │   │       │   ├── chat.py
-│   │   │       │   ├── hardware.py
-│   │   │       │   ├── memory.py
-│   │   │       │   ├── privacy.py
-│   │   │       │   └── voice.py
-│   │   │       └── __init__.py
 │   │   ├── core/         # Core application logic
-│   │   │   └── config.py
 │   │   ├── models/       # Data models
-│   │   │   └── database.py
 │   │   ├── services/     # Business logic services
-│   │   │   ├── hardware_detector.py
-│   │   │   ├── memory_service.py
-│   │   │   ├── model_router.py
-│   │   │   ├── privacy_service.py
-│   │   │   └── voice_service.py
 │   │   └── main.py       # Application entry point
 │   ├── tests/            # Unit and integration tests
 │   ├── Dockerfile        # Backend Docker image
 │   └── requirements.txt  # Python dependencies
 ├── frontend/             # Tauri desktop application
 │   ├── src/              # React application source
-│   │   ├── components/   # React components
-│   │   │   └── ChatInterface.tsx
-│   │   ├── services/     # Frontend services
-│   │   │   ├── index.ts
-│   │   │   └── voiceService.ts
-│   │   ├── App.tsx       # Main app component
-│   │   ├── index.css     # Global styles
-│   │   └── main.tsx      # Entry point
 │   ├── src-tauri/        # Tauri backend code (Rust)
-│   │   ├── src/
-│   │   │   └── main.rs
-│   │   ├── Cargo.toml
-│   │   └── tauri.conf.json
-│   ├── package.json      # Frontend dependencies
-│   └── index.html        # HTML entry point
+│   └── package.json      # Frontend dependencies
+├── models/               # AI models and related files
 ├── docker-compose.yml    # Service orchestration
-├── Makefile              # Development commands
 ├── README.md             # Project documentation
-├── LICENSE               # License information
 ├── INSTALLATION.md       # Installation guide
 ├── DEPLOYMENT.md         # Deployment guide
-├── TESTING.md            # Testing and optimization plan
-├── PROJECT_PLAN.md       # Comprehensive project plan
-└── SUMMARY.md            # Project summary
+└── TESTING.md            # Testing and optimization plan
 ```
 
 ## 🚀 Quick Start
@@ -198,47 +167,12 @@ cd frontend
 npm run tauri build
 ```
 
-## 🎯 Core Components
-
-### Hardware Detection Service
-Automatically detects CPU, GPU, and NPU capabilities to select the optimal model profile:
-- **Light Profile**: CPU-only systems with 3-7B parameter models
-- **Medium Profile**: GPU/NPU systems with 7-13B parameter models
-- **Heavy Profile**: High-end GPU systems with 13B+ parameter models
-
-### Model Routing System
-Intelligently routes requests to the appropriate local AI model based on:
-- Hardware profile
-- Task type (chat, coding, reasoning)
-- Resource availability
-- Performance requirements
-
-### Voice Interaction
-Complete voice interface with:
-- Wake word detection using Porcupine
-- Speech-to-text conversion with Whisper
-- Text-to-speech synthesis with Piper
-- Hands-free operation
-
-### Privacy & Security
-- End-to-end encryption for all stored data
-- Local processing by default with no cloud dependencies
-- Data classification for sensitive information
-- Secure communication between components
-
-### Memory Management
-- Persistent conversation history with SQLite
-- Encrypted storage for sensitive data
-- Automatic cleanup based on retention policies
-- Efficient database queries and indexing
-
 ## 📖 Documentation
 
-- [INSTALLATION.md](INSTALLATION.md) - Detailed installation instructions
-- [DEPLOYMENT.md](DEPLOYMENT.md) - Deployment and configuration guide
-- [TESTING.md](TESTING.md) - Testing strategies and optimization plan
-- [PROJECT_PLAN.md](PROJECT_PLAN.md) - Comprehensive project plan
-- [SUMMARY.md](SUMMARY.md) - Project summary and implementation details
+- [Installation Guide](INSTALLATION.md) - Detailed installation instructions
+- [Deployment Guide](DEPLOYMENT.md) - Deployment and configuration
+- [Testing Plan](TESTING.md) - Testing strategies and optimization
+- [Project Summary](SUMMARY.md) - Comprehensive project overview
 
 ## 🧪 Testing
 
@@ -249,50 +183,7 @@ The project includes comprehensive testing strategies:
 - **Performance Testing**: Load and stress testing
 - **Security Testing**: Vulnerability scanning and penetration testing
 
-### Test Commands
-```bash
-# Run all tests
-make test
-
-# Run backend tests
-make test-backend
-
-# Run frontend tests
-make test-frontend
-```
-
-## 🛠️ Development Commands
-
-```bash
-# Install all dependencies
-make setup
-
-# Start backend in development mode
-make backend-dev
-
-# Start frontend in development mode
-make frontend-dev
-
-# Start both backend and frontend
-make dev
-
-# Build backend Docker image
-make backend-build
-
-# Build frontend desktop application
-make frontend-build
-
-# Build both backend and frontend
-make build
-
-# Clean build artifacts
-make clean
-
-# Show help
-make help
-```
-
-## 🚀 Future Enhancements
+##  future enhancements
 
 ### Short-term Goals
 1. Model fine-tuning with LoRA
@@ -308,7 +199,7 @@ make help
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our contributing guidelines for details.
+We welcome contributions! Please see our [contributing guidelines](CONTRIBUTING.md) for details.
 
 1. Fork the repository
 2. Create a feature branch
@@ -327,7 +218,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [llama.cpp](https://github.com/ggerganov/llama.cpp) - Inference of LLMs in pure C/C++
 - [Whisper](https://github.com/openai/whisper) - Robust speech recognition model
 - [Piper](https://github.com/rhasspy/piper) - Fast neural text to speech system
-- [Porcupine](https://github.com/Picovoice/porcupine) - Wake word detection engine
 
 ## 📞 Support
 
