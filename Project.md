@@ -5,7 +5,7 @@
 A fully-functional, privacy-first desktop AI assistant that runs entirely on user hardware with automatic capability detection. Supports chat, reasoning, and coding tasks with voice interaction, maintaining all data processing locally by default. The assistant adapts to hardware configurations (CPU, GPU, NPU) for optimal performance across Windows, macOS, and Linux.
 
 ### Vision
-Deliver a complete AI assistant that provides immediate and advanced value while prioritizing user privacy and local control. The product works seamlessly from basic conversations to complex tasks with zero external data transmission.
+Deliver a complete AI assistant that provides immediate and advanced value while prioritizing user privacy and local control through intelligent local-first processing. The product handles seamlessly from basic conversations to complex tasks, minimizing external data transmission with selective escalation only when local capabilities are insufficient.
 
 ### Goals
 1. **Full Local Privacy**: All data processing occurs locally by default with no cloud dependencies
