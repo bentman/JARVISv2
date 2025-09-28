@@ -1,5 +1,8 @@
 # JARVIS v2 - Local AI Assistant Experiments
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#)
+
 This repository serves as a collection of experimental projects exploring privacy-focused, local-first AI assistants. Each sub-project represents an incomplete implementation of an AI assistant, utilizing various AI providers and technologies to enable local processing, hardware adaptation, and multimodal interfaces (voice and chat). The intent is to leverage these experiments as references for iterative improvement and completion toward a unified, working AI assistant model.
 
 ## Key Features
