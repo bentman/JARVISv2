@@ -83,6 +83,15 @@ System for integrated queries across multiple sources: local memory (conversatio
 4. **Voice Service**: Wake word detection, speech-to-text, text-to-speech
 5. **Privacy Service**: Data classification, encryption, and local processing enforcement
 
+### Memory Management System
+Conceptual architecture for persistent user context and knowledge:
+
+- **Short-term Cache**: Redis cache for frequent queries, context maintenance, and quick access to recent snippets
+- **Vector Storage**: Embeddings in searchable backend for semantic retrieval and semantic similarity
+- **Long-term Persistence**: Structured storage for conversation history with tagging, filtering, and export capabilities
+- **Memory Synchronization**: Framework for syncing memory across devices, with versioning and conflict resolution
+- **Privacy Controls**: Data classification and selective redaction for memory snippets, ensuring only approved content is retained
+
 ### Desktop Application
 - Framework for cross-platform desktop applications with web technologies
 - Modern UI library for rich, responsive interfaces
@@ -192,23 +201,16 @@ Clean, intuitive layout featuring:
 
 ## Operational Requirements
 
-### Testing Approach
-- Comprehensive unit and integration testing
-- Performance benchmarking across hardware configurations
-- Voice accuracy validation under various conditions
-- Cross-platform compatibility assurance
+### Quality Assurance and Risk
+- Comprehensive testing including unit/integration, performance benchmarking, voice validation, cross-platform compatibility
+- Security through data isolation, sandboxing, regular updates, privacy protection, secure distribution
+- Risk management addressing hardware compatibility via abstraction, memory constraints via optimization, voice limitations via feedback, performance variations via profiling
 
-### Security Measures
-- Data isolation and sandboxing
-- Regular security updates and patching
-- User privacy protection and anonymity
-- Secure model and update distribution
-
-### Risk Management
-- Hardware compatibility challenges addressed through abstraction
-- Memory constraints handled with intelligent resource management
-- Voice recognition limitations mitigated with user feedback
-- Performance variations managed through profiling and optimization
+### Cost Analysis and Budget Monitoring
+- Basic cost tracking with real-time usage monitoring per AI provider/API
+- Provider cost calculations including token-based charges and route-specific expenses
+- Budget governance with configurable limits, usage warnings, and predictive overspend alerts
+- User transparency providing simple cost visibility, historical spending summaries, and control options
 
 ## Success Metrics
 
