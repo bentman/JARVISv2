@@ -8,11 +8,13 @@ This repository serves as a collection of experimental projects exploring privac
 ## Key Features
 
 - **Local-First Processing**: All AI operations run locally on hardware to minimize external dependencies.
-- **Hardware Adaptive**: Automatic detection and optimization for varying compute capabilities (CPUs, GPUs, etc.).
-- **Voice-Enabled**: Support for voice input, output, and wake word interactions.
-- **Privacy-Focused**: Emphasis on data security, encryption, and avoiding cloud-based processing.
-- **Multimodal Interaction**: Combines text and voice for seamless, natural user experiences.
-- **Cross-Platform**: Designed for consistent functionality across Windows, macOS, and Linux.
+- **Hardware Adaptive Model Selection**: Automatic circuit detection profiling capabilities for routing to optimized local/cloud models per device tier (light/medium/heavy/NPU).
+- **Intelligent Routing**: Local-first with policy-based escalation to cloud-lite (small models for gaps in reasoning/coding) or cloud-heavy (large models for complex analysis), balancing performance, privacy, and budget.
+- **Unified Search Aggregation**: Combines local conversation memory, vector embeddings, and web/cloud AI sources with ranked results, citations, and summaries.
+- **Voice-Enabled**: Support for voice input, output, wake word interactions, and continuous conversation modes.
+- **Privacy-Focused**: Emphasis on data security, encryption, and classification with selective escalation (redaction for sensitive data).
+- **Multimodal Interaction**: Combines text and voice for seamless, natural user experiences with real-time synchronization.
+- **Cross-Platform**: Designed for consistent functionality across Windows, macOS, and Linux with native performance.
 
 ## Core Components and Architecture
 
