@@ -60,11 +60,19 @@ class HardwareDetector:
     def get_hardware_profile(self) -> str:
         """
         Determine hardware profile based on capabilities
-        Returns: "light", "medium", or "heavy"
+        Returns: "light", "medium", "heavy", or "npu-optimized"
         """
-        # Check for GPU first
+        # Check for NPU first (specialized processors)
+        if self._has_npu():
+            return "npu-optimized"
+        
+        # Check for GPU
         if self.gpu_info and self.gpu_info["memory_gb"] >= 8:
-            return "heavy"
+            # Check if we have enough total memory to run large models alongside other processes
+            if self.memory_info["total_gb"] >= 16:
+                return "heavy"
+            else:
+                return "medium"
         elif self.gpu_info and self.gpu_info["memory_gb"] >= 4:
             return "medium"
         else:
@@ -73,6 +81,34 @@ class HardwareDetector:
                 return "medium"
             else:
                 return "light"
+                
+    def _has_npu(self) -> bool:
+        """
+        Check for NPU (Neural Processing Unit) availability
+        This is a simplified check - in a real implementation, 
+        you would use vendor-specific APIs to detect NPUs
+        """
+        # Check for common NPU indicators in CPU architecture
+        architecture = self.cpu_info.get("architecture", "").lower()
+        
+        # Additional checks could include:
+        # - Intel processors with AI Boost/Acceleration
+        # - ARM processors with NPU
+        # - Qualcomm processors with AI engine
+        # - Apple processors with Neural Engine
+        
+        # For now, this is a placeholder that would need to be
+        # implemented with vendor-specific detection
+        return "npu" in architecture or self._check_vendor_npu()
+        
+    def _check_vendor_npu(self) -> bool:
+        """
+        Check for vendor-specific NPUs
+        """
+        # This would contain vendor-specific NPU detection logic
+        # For example, using Intel OpenVINO, ARM Compute Library, etc.
+        # Placeholder implementation
+        return False
                 
     def get_capabilities(self) -> Dict:
         """Get full hardware capabilities"""

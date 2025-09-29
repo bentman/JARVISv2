@@ -17,18 +17,23 @@ class ModelRouter:
         return {
             "light": {
                 "chat": "llama-3.2-3b",
-                "coding": "starcoder2-3b",
+                "coding": "starcoder2-3b",  # or tinyllama-1.1b-code
                 "reasoning": "phi-3-mini-3.8b"
             },
             "medium": {
                 "chat": "mistral-7b-instruct",
-                "coding": "codellama-7b",
+                "coding": "codellama-7b",  # or phi-3-medium-4k
                 "reasoning": "mixtral-8x7b"
             },
             "heavy": {
-                "chat": "llama-3.3-70b",
-                "coding": "deepseek-coder-33b",
-                "reasoning": "llama-4-maverick-402b"
+                "chat": "llama-3.3-70b",  # if 16GB+ VRAM available
+                "coding": "codellama-13b",  # or deepseek-coder-v2-1.9b
+                "reasoning": "llama-4-maverick-402b"  # if 16GB+ VRAM available
+            },
+            "npu-optimized": {
+                "chat": "optimized-phi-3-mini",  # or similar optimized model
+                "coding": "optimized-codellama-7b",  # NPU-optimized version
+                "reasoning": "optimized-phi-3-mini"  # or similar optimized model
             }
         }
         

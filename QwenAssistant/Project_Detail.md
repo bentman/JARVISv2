@@ -22,6 +22,12 @@ The Local AI Assistant is a privacy-focused, local-first AI assistant that runs 
   - **NPU Optimized**: Accelerated performance on neural processing hardware
   - **API Integration**: Optional cloud fallback for unsupported tasks
 
+The system will automatically select the appropriate performance profile based on your hardware:
+- **Light Profile**: For systems with limited resources (e.g., 3-7B parameter models)
+- **Medium Profile**: For mid-range systems with moderate GPU/NPU capabilities (e.g., 7-13B parameter models)
+- **Heavy Profile**: For high-performance devices with sufficient memory to run large models (e.g., 13B+ parameter models)
+- **NPU Optimized**: For neural processing units with specialized optimizations
+
 ### 🎙️ Voice Interaction
 - **Wake Word Detection**: Hands-free activation with local processing
 - **Speech-to-Text**: Accurate voice recognition

@@ -26,6 +26,7 @@ This project is currently under active development. The documentation provides a
   - **Medium**: For mid-range systems
   - **Heavy**: For high-performance devices
   - **NPU Optimized**: For neural processing units
+  - **API Integration**: Optional cloud fallback for unsupported tasks
 
 ### 🎙️ Voice Interaction
 - **Wake Word Detection**: Hands-free activation with local processing

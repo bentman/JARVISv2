@@ -21,10 +21,10 @@ The Local AI Assistant automatically profiles your hardware to select the optima
 5. Disk space and network capabilities
 
 The system will automatically select the appropriate performance profile based on your hardware:
-- **Light**: For lower-end hardware (3-7B parameter models)
-- **Medium**: For mid-range systems (7-13B parameter models)
-- **Heavy**: For high-performance devices (13B+ parameter models)
-- **NPU Optimized**: For neural processing units
+- **Light Profile**: For systems with limited resources (e.g., 3-7B parameter models)
+- **Medium Profile**: For mid-range systems with moderate GPU/NPU capabilities (e.g., 7-13B parameter models)
+- **Heavy Profile**: For high-performance devices with sufficient memory to run large models (e.g., 13B+ parameter models)
+- **NPU Optimized**: For neural processing units with specialized optimizations
 - **API Integration**: Optional cloud fallback for unsupported tasks
 
 ## Core Features
