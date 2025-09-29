@@ -1,27 +1,29 @@
-# Local AI Assistant - Project Detail
+# Local AI Assistant - System Design & Vision
 
 ## Project Overview
 
-The Local AI Assistant is a privacy-focused, local-first AI assistant that runs entirely on user hardware. It provides chat, voice interaction, and reasoning capabilities while ensuring all data processing occurs locally by default.
+The Local AI Assistant is a privacy-focused, local-first AI assistant that runs entirely on user hardware. It provides chat, voice interaction, and reasoning capabilities while ensuring all data processing occurs locally by default. The system is designed with privacy, hardware adaptability, and cross-platform compatibility as core principles.
 
 ## 🌟 Key Features
 
 ### 🔒 Privacy First
-- **Local Processing**: All AI inference happens on your device
+- **Local Processing**: All AI inference happens on your device by default
 - **End-to-End Encryption**: Conversation data encrypted at rest
-- **No Cloud Dependencies**: Zero external data transmission
-- **Data Classification**: Automatic sensitive data detection
+- **No Cloud Dependencies**: Zero external data transmission by default
+- **Data Classification**: Automatic sensitive data detection and handling
 
 ### 🖥️ Hardware Adaptive
 - **Automatic Detection**: CPU/GPU/NPU capability detection
-- **Dynamic Model Selection**: Optimizes for your hardware
-- **Three Performance Tiers**: 
-  - Light (CPU-only): 3-7B parameter models
-  - Medium (GPU/NPU): 7-13B parameter models
-  - Heavy (High-end GPU): 13B+ parameter models
+- **Dynamic Model Selection**: Optimizes for your hardware configuration
+- **Performance Profiles**:
+  - **Light**: Basic tasks for lower-end hardware
+  - **Medium**: Enhanced capabilities for mid-range systems
+  - **Heavy**: Full feature set for high-performance devices
+  - **NPU Optimized**: Accelerated performance on neural processing hardware
+  - **API Integration**: Optional cloud fallback for unsupported tasks
 
 ### 🎙️ Voice Interaction
-- **Wake Word Detection**: Hands-free activation
+- **Wake Word Detection**: Hands-free activation with local processing
 - **Speech-to-Text**: Accurate voice recognition
 - **Text-to-Speech**: Natural voice responses
 - **Real-time Processing**: Low-latency voice interaction
@@ -65,11 +67,44 @@ The Local AI Assistant is a privacy-focused, local-first AI assistant that runs 
 │  │   LLM       │  │   Voice     │  │  Hardware-          │  │
 │  │  Inference  │  │  Models     │  │  Optimized          │  │
 │  └─────────────┘  └─────────────┘  │  Execution          │  │
-│                                   └─────────────────────┘  │
+│                                    └─────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 🛠️ Technology Stack
+## Core Architecture Components
+
+### Backend Services
+1. **Core Assistant Service**: REST API for frontend communication, request routing, and orchestration
+2. **Model Router Service**: Hardware detection, model selection, and resource management
+3. **Memory Service**: Conversation storage, vector embedding, and semantic search
+4. **Voice Service**: Wake word detection, speech-to-text, text-to-speech
+5. **Privacy Service**: Data classification, encryption, and local processing enforcement
+
+### Memory Management System
+- **Short-term Cache**: Redis cache for frequent queries, context maintenance, and quick access to recent snippets
+- **Vector Storage**: Embeddings in searchable backend for semantic retrieval and semantic similarity
+- **Long-term Persistence**: Structured storage for conversation history with tagging, filtering, and export capabilities
+- **Memory Synchronization**: Framework for syncing memory across devices, with versioning and conflict resolution
+- **Privacy Controls**: Data classification and selective redaction for memory snippets, ensuring only approved content is retained
+
+### Intelligent Routing System
+Policy-driven logic prioritizing local-first processing with tiered escalation:
+- Local (priority) for standard tasks
+- Cloud-lite (small models) for capability gaps in reasoning/coding
+- Cloud-heavy (large models) for complex analysis
+
+The system considers hardware profiles, privacy data classification (redaction/summarization for sensitive content), and budget governance with real-time tracking and predictions.
+
+### Unified Search Aggregation
+System for integrated queries across multiple sources:
+- Local memory (conversation history)
+- Vector embeddings (semantic retrieval)
+- Search providers (web APIs like Bing/Google/Tavily)
+- Cloud AI providers
+
+Results are aggregated, ranked by relevance, with citations, summaries, and configurable source preferences.
+
+## Technology Stack
 
 ### Backend
 - **Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python)
@@ -86,138 +121,30 @@ The Local AI Assistant is a privacy-focused, local-first AI assistant that runs 
 ### AI Models
 - **Chat Models**: Llama 3.2, Mistral 7B, Llama 3.3
 - **Voice Models**: Whisper (STT), Piper (TTS)
-- **Wake Word**: Planned for local implementation (currently in development)
+- **Wake Word**: Local implementation for privacy-focused activation
 - **Model Format**: GGUF for optimal local performance
 
-## Implementation Status
+## Design Principles
 
-### Completed Components
-- ✅ Project structure and initial setup
-- ✅ Backend services with FastAPI
-- ✅ Hardware detection module
-- ✅ Model routing system
-- ✅ Memory storage system
-- ✅ Voice service components
-- ✅ Privacy and security features
-- ✅ Frontend desktop application
-- ✅ Chat interface
-- ✅ Voice interaction integration
-- ✅ Deployment and packaging system
-- ✅ Testing and optimization plan
+### Privacy & Security
+- Local-first processing with no default external data transmission
+- Data encryption for conversation storage
+- Classification system for sensitive information handling
+- User controls for data retention and sharing
+- End-to-end encryption for data protection
+- Model integrity verification
+- Secure inter-component communication
+- Isolation of AI models and data processing
 
-### Key Achievements
-1. **Privacy-First Architecture**: All data processing occurs locally with end-to-end encryption
-2. **Hardware Adaptability**: Automatic optimization for available CPU/GPU/NPU resources
-3. **Voice-Enabled Interface**: Complete voice interaction with wake word detection
-4. **Cross-Platform Compatibility**: Native desktop applications for Windows, macOS, and Linux
-5. **Modular Design**: Extensible architecture for future enhancements
-
-## Project Plan
-
-### Primary Goals
-1. **Privacy-First Design**: Ensure all data processing occurs locally with end-to-end encryption
-2. **Hardware Adaptability**: Automatically optimize for available CPU/GPU/NPU resources
-3. **Voice-Enabled Interface**: Provide complete voice interaction with wake word detection
-4. **Cross-Platform Compatibility**: Deliver native desktop applications for Windows, macOS, and Linux
-5. **User Experience**: Create an intuitive, responsive interface that rivals cloud-based assistants
-
-### Implementation Phases
-
-#### Phase 1: Foundation (Weeks 1-4)
-**Deliverables**:
-- Project structure and initial setup
-- Backend services with FastAPI
-- Basic chat interface
-- Memory storage system
-
-**Tasks**:
-1. Create project structure and documentation
-2. Set up backend with FastAPI and SQLite
-3. Implement core API endpoints
-4. Create basic React frontend with Tauri
-5. Implement conversation storage
-6. Set up development environment
-
-#### Phase 2: Intelligence (Weeks 5-8)
-**Deliverables**:
-- Hardware detection module
-- Model routing system
-- Voice service components
-- Privacy and security features
-
-**Tasks**:
-1. Implement hardware detection and profiling
-2. Develop model selection and routing logic
-3. Integrate voice recognition and synthesis
-4. Implement data encryption and privacy controls
-5. Add wake word detection
-6. Create model management system
-
-#### Phase 3: Experience (Weeks 9-12)
-**Deliverables**:
-- Complete chat interface
-- Voice interaction integration
-- Cross-platform desktop applications
-- Deployment and packaging system
-
-**Tasks**:
-1. Enhance chat UI with rich features
-2. Integrate voice interaction fully
-3. Build native desktop applications
-4. Implement deployment and update mechanisms
-5. Create installation packages
-6. Test cross-platform compatibility
-
-#### Phase 4: Polish (Weeks 13-16)
-**Deliverables**:
-- Comprehensive testing suite
-- Performance optimization
-- Documentation and user guides
-- Production-ready release
-
-**Tasks**:
-1. Conduct comprehensive testing
-2. Optimize performance and resource usage
-3. Create user documentation
-4. Finalize packaging and distribution
-5. Conduct user acceptance testing
-6. Prepare for release
-
-## Performance Benchmarks
-
-### Response Times
-- **Light Profile**: < 5 seconds for typical queries
-- **Medium Profile**: < 3 seconds for typical queries
-- **Heavy Profile**: < 2 seconds for typical queries
-
-### Resource Usage
-- **CPU Usage**: < 80% during active processing
-- **Memory Usage**: < 8GB for medium profile
-- **Disk Space**: < 20GB for all models and data
-
-## Security Features
-
-### Data Protection
-- **Encryption**: AES-256 for data at rest
-- **Communication**: TLS 1.3 between components
-- **Access Control**: File system permissions for sensitive data
-
-### Privacy Controls
-- **Data Classification**: Automatic classification of sensitive information
-- **Local Processing**: Enforcement of local-only processing by default
-- **Minimal Permissions**: Only necessary system permissions requested
-
-## Deployment Options
-
-### Development
-- Docker Compose for backend services
-- Tauri development server for frontend
-- Hot reloading for rapid development
-
-### Production
-- Docker containers for backend services
-- Native desktop applications for frontend
-- Automated update mechanisms
+### Performance Requirements
+- Real-time conversation with sub-3 second responses
+- Voice processing with low latency and minimal delay
+- Interface responsiveness regardless of model size
+- Efficient resource utilization across hardware tiers
+- High system uptime and availability
+- Graceful degradation under resource constraints
+- Automatic error recovery and user feedback
+- Consistent performance across supported platforms
 
 ## Future Enhancements
 
@@ -232,29 +159,3 @@ The Local AI Assistant is a privacy-focused, local-first AI assistant that runs 
 2. **Edge Computing**: Extend to IoT devices and edge computing environments
 3. **Enterprise Features**: Add centralized management and compliance reporting
 4. **Mobile Support**: Extend to mobile platforms with React Native
-
-## Testing Strategy
-
-### Unit Testing
-- **Backend Services**: Hardware detection, model routing, memory storage, voice services, privacy features
-- **Frontend Components**: Chat interface, voice interaction components
-
-### Integration Testing
-- Backend-Frontend Communication
-- Hardware Detection Integration
-- Voice Service Integration
-
-### Performance Testing
-- Response Time Testing
-- Resource Usage Testing
-- Scalability Testing
-
-### Security Testing
-- Data Encryption Testing
-- Access Control Testing
-
-## Conclusion
-
-The Local AI Assistant project successfully implements a privacy-focused, local-first AI assistant with all core functionality in place. The modular architecture, combined with modern technologies and privacy-first design principles, provides a solid foundation for future enhancements while delivering immediate value to users who prioritize data privacy and local processing.
-
-The project balances performance, privacy, and usability to create a compelling alternative to cloud-based AI assistants, demonstrating that powerful AI capabilities can be delivered while maintaining user control over their data.

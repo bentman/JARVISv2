@@ -9,23 +9,26 @@ A privacy-focused, local-first AI assistant that runs entirely on your hardware 
 
 The Local AI Assistant is a cutting-edge AI application that provides chat, voice interaction, and reasoning capabilities while ensuring all data processing occurs locally on your device. Built with privacy as the core principle, it offers a compelling alternative to cloud-based AI assistants.
 
+This project is currently under active development. The documentation provides a roadmap of planned features and capabilities.
+
 ## 🌟 Key Features
 
 ### 🔒 Privacy First
-- **Local Processing**: All AI inference happens on your device
+- **Local Processing**: All AI inference happens on your device by default
 - **End-to-End Encryption**: Conversation data encrypted at rest
-- **No Cloud Dependencies**: Zero external data transmission
+- **No Cloud Dependencies**: Zero external data transmission by default
 
 ### 🖥️ Hardware Adaptive
 - **Automatic Detection**: CPU/GPU/NPU capability detection
-- **Dynamic Model Selection**: Optimizes for your hardware
-- **Three Performance Tiers**: 
-  - Light (CPU-only): 3-7B parameter models
-  - Medium (GPU/NPU): 7-13B parameter models
-  - Heavy (High-end GPU): 13B+ parameter models
+- **Dynamic Model Selection**: Optimizes for your hardware configuration
+- **Performance Profiles**: 
+  - **Light**: For lower-end hardware
+  - **Medium**: For mid-range systems
+  - **Heavy**: For high-performance devices
+  - **NPU Optimized**: For neural processing units
 
 ### 🎙️ Voice Interaction
-- **Wake Word Detection**: Hands-free activation (planned for local implementation)
+- **Wake Word Detection**: Hands-free activation with local processing
 - **Speech-to-Text**: Accurate voice recognition
 - **Text-to-Speech**: Natural voice responses
 
@@ -41,38 +44,12 @@ The Local AI Assistant is a cutting-edge AI application that provides chat, voic
 - **AI Models**: Llama 3.2, Mistral 7B, Whisper, Piper
 - **Containerization**: Docker
 
-## 🚀 Quick Start
-
-```bash
-# Clone the repository
-git clone https://github.com/your-org/local-ai-assistant.git
-cd local-ai-assistant
-
-# Start backend services
-cd backend
-docker-compose up -d
-
-# Install and start frontend
-cd ../frontend
-npm install
-npm run tauri dev
-```
-
 ## 📖 Documentation
 
-- [Project_Components.md](Project_Components.md) - Installation, setup, and quick start guide
-- [Project_Detail.md](Project_Detail.md) - Comprehensive project overview, plan, and implementation details
+- [Project_Components.md](Project_Components.md) - System architecture and components
+- [Project_Detail.md](Project_Detail.md) - System design and vision
+- [QWEN.md](QWEN.md) - User instructions for the AI assistant
 - [TESTING.md](TESTING.md) - Testing strategies and optimization plan
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our contributing guidelines for details.
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a pull request
 
 ## 📄 License
 
