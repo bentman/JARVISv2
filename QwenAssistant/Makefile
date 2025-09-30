@@ -28,7 +28,16 @@ help:
 .PHONY: setup
 setup:
 	@echo "Setting up development environment..."
-	cd $(BACKEND_DIR) && pip install -r requirements.txt
+	# Create virtual environment for backend
+	python3 -m venv $(BACKEND_DIR)/.venv
+	# Activate virtual environment and install backend dependencies
+	# On Windows: $(BACKEND_DIR)\\.venv\\Scripts\\activate.bat && pip install -r $(BACKEND_DIR)/requirements.txt
+	# On Unix: source $(BACKEND_DIR)/.venv/bin/activate && pip install -r $(BACKEND_DIR)/requirements.txt
+	if [ -f $(BACKEND_DIR)/.venv/bin/activate ]; then \
+		source $(BACKEND_DIR)/.venv/bin/activate && pip install -r $(BACKEND_DIR)/requirements.txt; \
+	else \
+		$(BACKEND_DIR)\\.venv\\Scripts\\activate.bat && pip install -r $(BACKEND_DIR)/requirements.txt; \
+	fi
 	cd $(FRONTEND_DIR) && npm install
 	@echo "Setup complete!"
 
@@ -36,7 +45,14 @@ setup:
 .PHONY: backend-dev
 backend-dev:
 	@echo "Starting backend in development mode..."
-	cd $(BACKEND_DIR) && uvicorn app.main:app --reload
+	# Activate virtual environment and start backend server
+	# On Windows: $(BACKEND_DIR)\.venv\Scripts\activate.bat && uvicorn app.main:app --reload
+	# On Unix: source $(BACKEND_DIR)/.venv/bin/activate && uvicorn app.main:app --reload
+	if [ -f $(BACKEND_DIR)/.venv/bin/activate ]; then \
+		source $(BACKEND_DIR)/.venv/bin/activate && uvicorn app.main:app --reload; \
+	else \
+		$(BACKEND_DIR)\.venv\Scripts\activate.bat && uvicorn app.main:app --reload; \
+	fi
 
 # Frontend development
 .PHONY: frontend-dev
@@ -49,7 +65,14 @@ frontend-dev:
 dev:
 	@echo "Starting both backend and frontend in development mode..."
 	@echo "Starting backend..."
-	cd $(BACKEND_DIR) && uvicorn app.main:app --reload &
+	# Activate virtual environment and start backend server
+	# On Windows: $(BACKEND_DIR)\.venv\Scripts\activate.bat && uvicorn app.main:app --reload &
+	# On Unix: source $(BACKEND_DIR)/.venv/bin/activate && uvicorn app.main:app --reload &
+	if [ -f $(BACKEND_DIR)/.venv/bin/activate ]; then \
+		source $(BACKEND_DIR)/.venv/bin/activate && uvicorn app.main:app --reload & \
+	else \
+		$(BACKEND_DIR)\.venv\Scripts\activate.bat && uvicorn app.main:app --reload & \
+	fi
 	@echo "Starting frontend..."
 	cd $(FRONTEND_DIR) && npm run tauri dev
 
@@ -76,7 +99,14 @@ test: test-backend test-frontend
 .PHONY: test-backend
 test-backend:
 	@echo "Running backend tests..."
-	cd $(BACKEND_DIR) && python -m pytest tests/
+	# Activate virtual environment and run backend tests
+	# On Windows: $(BACKEND_DIR)\.venv\Scripts\activate.bat && python -m pytest tests/
+	# On Unix: source $(BACKEND_DIR)/.venv/bin/activate && python -m pytest tests/
+	if [ -f $(BACKEND_DIR)/.venv/bin/activate ]; then \
+		source $(BACKEND_DIR)/.venv/bin/activate && python -m pytest tests/; \
+	else \
+		$(BACKEND_DIR)\.venv\Scripts\activate.bat && python -m pytest tests/; \
+	fi
 
 .PHONY: test-frontend
 test-frontend:

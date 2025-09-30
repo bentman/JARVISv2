@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api/tauri';
+import { ApiService } from './api';
 
 export class VoiceService {
   private isListening = false;
@@ -52,13 +52,15 @@ export class VoiceService {
       // Convert blob to base64
       const base64Data = await this.blobToBase64(audioBlob);
       
-      // Send to backend for processing
-      const result = await invoke('process_voice_input', { audioData: base64Data });
+      // Send to backend for speech-to-text processing
+      const result = await ApiService.speechToText(base64Data);
       
-      // Handle the result (this would depend on your backend response)
-      console.log('Voice processing result:', result);
+      // Handle the result (return the transcribed text)
+      console.log('Speech-to-text result:', result);
+      return result.text;
     } catch (error) {
       console.error('Error processing audio:', error);
+      throw error;
     }
   }
 
@@ -82,12 +84,14 @@ export class VoiceService {
   async speak(text: string): Promise<void> {
     try {
       // Send text to backend for TTS conversion
-      const base64Audio = await invoke('text_to_speech', { text });
+      const base64Audio = await ApiService.textToSpeech(text);
       
-      // Play the audio (this would require additional implementation)
-      console.log('TTS result received:', base64Audio);
+      // Create audio element and play
+      const audio = new Audio(`data:audio/wav;base64,${base64Audio}`);
+      await audio.play();
     } catch (error) {
       console.error('Error with text-to-speech:', error);
+      throw error;
     }
   }
 

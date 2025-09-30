@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, Mic, Settings, FileText, MicOff } from 'lucide-react';
-import { voiceService } from './services';
+import { voiceService } from '../services';
+import { ApiService } from '../services/api';
 
 interface Message {
   id: string;
@@ -35,19 +36,46 @@ const ChatInterface: React.FC = () => {
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
 
-    // Simulate AI response
     setIsProcessing(true);
     try {
-      // In a real implementation, this would call the backend API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call the backend API to get AI response
+      const response = await ApiService.sendMessage({
+        message: inputValue,
+        mode: 'chat',
+        stream: true
+      });
       
-      const aiMessage: Message = {
+      // Extract the actual response content from the API response
+      // The backend returns an array of responses with different types
+      const aiResponse = response.find(r => r.type === 'response');
+      
+      if (aiResponse) {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: aiResponse.content,
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      } else {
+        // If no proper response was received, show an error
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: 'Sorry, I encountered an error processing your request.',
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `I received your message: "${inputValue}". This is a simulated response from the AI assistant.`,
+        content: 'Sorry, there was an error connecting to the AI service. Please try again.',
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsProcessing(false);
     }

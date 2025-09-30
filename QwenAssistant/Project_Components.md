@@ -5,32 +5,26 @@
 The Local AI Assistant follows a modular architecture with distinct backend services and a cross-platform desktop frontend:
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Desktop Application                      │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │   Voice     │  │   Chat UI   │  │  Hardware Detection │  │
-│  │ Interface   │  │             │  │                     │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-┌─────────────────────────▼───────────────────────────────────┐
-│                    Backend Services                         │
-│                                                             │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │   Model     │  │  Memory     │  │   Privacy &         │  │
-│  │  Routing    │  │  Storage    │  │  Security           │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-┌─────────────────────────▼───────────────────────────────────┐
-│                   AI Model Execution                        │
-│                                                             │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │   LLM       │  │   Voice     │  │  Hardware-          │  │
-│  │  Inference  │  │  Models     │  │  Optimized          │  │
-│  └─────────────┘  └─────────────┘  │  Execution          │  │
-│                                    └─────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Desktop Application                          │
+│  ┌─────────────────┐   ┌─────────────────┐   ┌────────────────────┐ │
+│  │ Voice Interface │   │ Chat UI         │   │ Hardware Detection │ │
+│  └─────────────────┘   └─────────────────┘   └────────────────────┘ │
+└───────────────────────────┬─────────────────────────────────────────┘
+                            │
+┌───────────────────────────▼─────────────────────────────────────────┐
+│                        Backend Services                             │
+│  ┌─────────────────┐   ┌─────────────────┐   ┌────────────────────┐ │
+│  │ Model Routing   │   │ Memory Storage  │   │ Privacy & Security │ │
+│  └─────────────────┘   └─────────────────┘   └────────────────────┘ │
+└───────────────────────────┬─────────────────────────────────────────┘
+                            │
+┌───────────────────────────▼─────────────────────────────────────────┐
+│                        AI Model Execution                           │
+│  ┌─────────────────┐   ┌─────────────────┐   ┌────────────────────┐ │
+│  │ LLM Inference   │   │ Voice Models    │   │ Hardware-Optimized │ │
+│  └─────────────────┘   └─────────────────┘   └────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Core Components
@@ -42,6 +36,15 @@ The Local AI Assistant follows a modular architecture with distinct backend serv
 3. **Memory Service**: Conversation storage, vector embedding, and semantic search
 4. **Voice Service**: Wake word detection, speech-to-text, text-to-speech
 5. **Privacy Service**: Data classification, encryption, and local processing enforcement
+
+### Development Environment
+
+The backend uses a Python virtual environment (`.venv`) for dependency isolation:
+
+- **Virtual Environment**: Automatically created at `backend/.venv`
+- **Dependency Management**: Managed through `requirements.txt`
+- **Setup Command**: `make setup` creates the environment and installs dependencies
+- **Development Commands**: All backend commands automatically use the virtual environment
 
 ### Desktop Application
 
@@ -74,4 +77,21 @@ System for integrated queries across multiple sources:
 - Cloud AI providers
 
 Results are aggregated, ranked by relevance, with citations, summaries, and configurable source preferences.
+
+## Current Implementation Status
+
+The project has made significant progress with working implementations of:
+- Backend services (hardware detection, chat API, voice processing, privacy controls)
+- Frontend chat interface with voice capabilities
+- Model routing system based on hardware profiles
+- Memory and privacy services
+- Basic database integration with SQLite
+
+### Remaining Components
+- Semantic search functionality (vector embeddings)
+- Redis integration for caching
+- Complete NPU detection
+- Wake word detection implementation
+- Cross-platform desktop app distribution
+- Comprehensive testing suite
 ```

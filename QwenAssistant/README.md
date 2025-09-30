@@ -9,7 +9,7 @@ A privacy-focused, local-first AI assistant that runs entirely on your hardware 
 
 The Local AI Assistant is a cutting-edge AI application that provides chat, voice interaction, and reasoning capabilities while ensuring all data processing occurs locally on your device. Built with privacy as the core principle, it offers a compelling alternative to cloud-based AI assistants.
 
-This project is currently under active development. The documentation provides a roadmap of planned features and capabilities.
+This project has made significant progress with core functionality implemented. The documentation provides a roadmap of planned features and capabilities.
 
 ## 🌟 Key Features
 
@@ -17,6 +17,7 @@ This project is currently under active development. The documentation provides a
 - **Local Processing**: All AI inference happens on your device by default
 - **End-to-End Encryption**: Conversation data encrypted at rest
 - **No Cloud Dependencies**: Zero external data transmission by default
+- **Data Classification**: Automatic sensitive data detection and handling
 
 ### 🖥️ Hardware Adaptive
 - **Automatic Detection**: CPU/GPU/NPU capability detection
@@ -32,6 +33,7 @@ This project is currently under active development. The documentation provides a
 - **Wake Word Detection**: Hands-free activation with local processing
 - **Speech-to-Text**: Accurate voice recognition
 - **Text-to-Speech**: Natural voice responses
+- **Real-time Processing**: Low-latency voice interaction
 
 ### 💬 Rich Chat Interface
 - **Streaming Responses**: Real-time message updates
@@ -49,12 +51,35 @@ This project is currently under active development. The documentation provides a
 
 - [Project_Components.md](Project_Components.md) - System architecture and components
 - [Project_Detail.md](Project_Detail.md) - System design and vision
-- [QWEN.md](QWEN.md) - User instructions for the AI assistant
-- [TESTING.md](TESTING.md) - Testing strategies and optimization plan
+- [QWEN.md](QWEN.md) - AI coding assistant instructions
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🛠️ Development Setup
+
+The project uses a Python virtual environment in the backend to isolate dependencies and avoid conflicts with your system-wide Python installation. This ensures consistency across different development environments.
+
+To set up the development environment, run:
+
+```bash
+make setup
+```
+
+This will create a virtual environment in the `backend/.venv` directory and install all required dependencies.
+
+The system automatically detects your hardware capabilities and selects the appropriate model profile:
+- **Light Profile**: For systems with limited resources
+- **Medium Profile**: For mid-range systems with moderate GPU/NPU capabilities  
+- **Heavy Profile**: For high-performance devices with sufficient memory
+- **NPU Optimized**: For neural processing units with specialized optimizations
+
+## ⚠️ Important Note on Development Process
+
+During a previous development session, a mistake was made where Python dependencies were installed globally instead of using the project's virtual environment. This violated the project's requirement to use virtual environments for dependency isolation. The mistake has been corrected by removing the globally installed packages.
+
+**Important**: Always ensure you are working within the project's virtual environment to maintain proper dependency isolation.
 
 ## 📞 Support
 

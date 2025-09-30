@@ -1,134 +1,72 @@
-# Local AI Assistant - User Instructions
+# Qwen Code Instructions
 
-## Overview
+## Style & Conventions
+- **Backend**: Use Python with PEP 8 style guidelines
+- **Frontend**: Use TypeScript with React functional components and hooks
+- **Naming**: Use snake_case for Python variables/functions, camelCase for TypeScript
+- **API Routes**: Follow RESTful conventions with versioning (e.g., `/api/v1/chat`)
+- **Type Hints**: Always include type hints in Python functions and TypeScript interfaces
+- **Async/Await**: Use async/await for I/O operations in Python
+- **Pydantic Models**: Use Pydantic for request/response validation in FastAPI
 
-The Local AI Assistant is a privacy-focused, local-first AI assistant that runs entirely on your hardware. All processing occurs on your device by default, ensuring maximum privacy and data control. This guide will help you understand how to use the assistant's features effectively.
+## Project Structure
+- **Backend Services**: Located in `backend/app/services/` (hardware_detector.py, model_router.py, etc.)
+- **API Endpoints**: Located in `backend/app/api/v1/endpoints/` (chat.py, hardware.py, etc.)
+- **Frontend Components**: Located in `frontend/src/components/`
+- **Frontend Services**: Located in `frontend/src/services/`
+- **Configuration**: Backend settings in `backend/app/core/config.py`
+- **Database Models**: Located in `backend/app/models/`
+- **Tauri Backend**: Located in `frontend/src-tauri/src/main.rs`
 
-## Getting Started
+## Common Tasks
+- **Adding New API Endpoint**: Create new file in `backend/app/api/v1/endpoints/`, add to router in `backend/app/api/v1/__init__.py`
+- **Adding New Service**: Create new file in `backend/app/services/`, implement as class with focused responsibility
+- **Adding Frontend Component**: Create new file in `frontend/src/components/` using React functional component pattern
+- **Hardware Profile Implementation**: Update model configurations in `backend/app/services/model_router.py`
+- **Environment Setup**: Use `make setup` to initialize virtual environment and dependencies
+- **Development Mode**: Use `make dev` to run both backend and frontend in development mode
 
-### System Requirements
-- Modern multi-core processor
-- Sufficient RAM for selected models
-- GPU acceleration support (optional but recommended)
-- SSD storage for model caching
+## Other Documentation Files
+- **Project.md**: Requirements document - do not modify without specific confirmation!
+- **README.md**: Main project overview for humans
+- **Project_Components.md**: System architecture and components for humans
+- **Project_Detail.md**: System design and vision for humans
+- **QWEN.md**: This file - for AI coding assistant instructions
 
-### Initial Setup
-The Local AI Assistant automatically profiles your hardware to select the optimal configuration:
-1. CPU architecture and core count
-2. GPU vendor, memory, and compute capabilities
-3. Memory capacity and usage patterns
-4. Specialized processors like NPUs
-5. Disk space and network capabilities
+## Current Implementation Status
+The project has made significant progress with working implementations of:
+- Backend services (hardware detection, chat API, voice processing, privacy controls)
+- Frontend chat interface with voice capabilities
+- Model routing system based on hardware profiles
+- Memory and privacy services
+- Basic database integration with SQLite
 
-The system will automatically select the appropriate performance profile based on your hardware:
-- **Light Profile**: For systems with limited resources (e.g., 3-7B parameter models)
-- **Medium Profile**: For mid-range systems with moderate GPU/NPU capabilities (e.g., 7-13B parameter models)
-- **Heavy Profile**: For high-performance devices with sufficient memory to run large models (e.g., 13B+ parameter models)
-- **NPU Optimized**: For neural processing units with specialized optimizations
-- **API Integration**: Optional cloud fallback for unsupported tasks
+## Next Steps & Implementation Requirements
 
-## Core Features
+### Immediate Priorities
+1. **Complete Semantic Search**: Implement vector embeddings functionality in memory_service.py
+2. **Database Implementation**: Complete the database models with actual SQLite implementation
+3. **Wake Word Detection**: Replace placeholder implementation in voice_service.py with actual wake word detection
+4. **Model Integration**: Ensure GGUF model files are properly integrated and accessible
+5. **Testing**: Create comprehensive unit and integration tests
 
-### Chat Interface
-- **Text Input**: Type your queries in the chat interface
-- **Streaming Responses**: Receive real-time message updates
-- **Conversation History**: Access persistent chat storage
-- **Markdown Support**: Rich formatting for responses
+### Critical Missing Elements
+1. **Redis Integration**: For short-term caching as mentioned in the architecture
+2. **Vector Database**: For semantic search capabilities (consider FAISS or similar)
+3. **NPU Detection**: Complete hardware detector with NPU-specific APIs
+4. **Budget Monitoring**: Cost analysis and budget governance features
+5. **Cross-platform Desktop App**: Complete Tauri configuration for desktop distribution
 
-### Voice Interaction
-- **Wake Word Activation**: Use the wake word to activate voice mode hands-free
-- **Voice Commands**: Speak naturally to interact with the assistant
-- **Barge-in Support**: Interrupt responses to ask follow-up questions
-- **Continuous Conversation**: Engage in natural, flowing dialogue
+### Implementation Guidelines
+- **Reference Existing Implementations**: When implementing features, research similar open-source projects on GitHub for proven approaches
+- **Model Integration**: Look for examples of GGUF model integration with ONNX Runtime or llama.cpp
+- **Voice Processing**: Research Whisper for STT and Piper TTS implementations
+- **Wake Word Detection**: Implement local-first wake word detection solutions (avoid cloud-dependent services like Porcupine)
+- **Vector Embeddings**: Implement semantic search using vector databases like FAISS, HNSW, or similar
 
-### Privacy Controls
-- **Local Processing**: All data processing occurs on your device by default
-- **Data Classification**: Automatic detection of sensitive information
-- **Privacy Levels**: Adjust privacy settings based on your preferences
-- **Data Retention**: Control how long conversations are stored
-
-## Using the Assistant
-
-### Interaction Modes
-1. **Text Mode**: Traditional chat interface with rich formatting
-2. **Voice Mode**: Hands-free interaction with continuous conversation
-3. **Hybrid Mode**: Seamless switching between voice and text
-
-### Intelligent Routing
-The assistant uses a policy-driven system that prioritizes local-first processing:
-- **Local Processing**: Standard tasks are processed on your device (priority)
-- **Cloud-lite**: Small models for capability gaps in reasoning/coding
-- **Cloud-heavy**: Large models for complex analysis (when local insufficient)
-
-The system automatically considers:
-- Hardware profiles and capabilities
-- Privacy data classification (redaction/summarization for sensitive content)
-- Budget governance with real-time tracking and predictions
-
-### Memory Management
-- **Short-term Memory**: Recent interactions for context
-- **Long-term Memory**: Persistent conversation history
-- **Semantic Search**: Find relevant past conversations
-- **Privacy Controls**: Selective redaction of sensitive content
-
-### Unified Search
-The assistant can access information from multiple sources:
-- Local memory (your conversation history)
-- Vector embeddings (semantic retrieval)
-- Search providers (web APIs)
-- Cloud AI providers (when local processing insufficient)
-
-Results are aggregated, ranked by relevance, with citations and summaries.
-
-## Settings and Configuration
-
-### Hardware Profile Override
-- Manually adjust the performance profile if needed
-- Override automatic hardware detection
-- Customize model selection preferences
-
-### Voice Settings
-- Wake word customization
-- Voice activation sensitivity
-- Text-to-speech voice selection
-- Audio quality preferences
-
-### Privacy Settings
-- Data retention period
-- Sensitive content handling
-- Local vs. cloud processing preferences
-- Data encryption settings
-
-## Privacy & Security
-
-### Data Handling Principles
-- Local-first processing with no default external data transmission
-- Data encryption for conversation storage
-- Classification system for sensitive information handling
-- User controls for data retention and sharing
-
-### Security Features
-- End-to-end encryption for data protection
-- Model integrity verification
-- Secure inter-component communication
-- Isolation of AI models and data processing
-
-## Troubleshooting
-
-### Common Issues
-1. **Performance**: If responses are slow, consider switching to a lighter hardware profile
-2. **Voice Activation**: Adjust microphone sensitivity or retrain the wake word
-3. **Memory**: Clear conversation history if experiencing memory issues
-4. **Privacy**: Review privacy settings if you notice unexpected cloud processing
-
-## Advanced Features
-
-### Customization
-- Personalize responses based on your preferences
-- Configure specialized knowledge for specific domains
-- Set up custom commands and shortcuts
-
-### Integration
-- Export conversation history
-- Connect with local tools and applications
-- Configure external data sources
+### Requirements Reference
+- All implementation should align with requirements in `Project.md`
+- Do not implement features without understanding the complete requirements first
+- Focus on local-first processing as defined in the requirements
+- Ensure all data processing occurs locally by default with no cloud dependencies
+- Maintain proper dependency isolation using the virtual environment at `backend/.venv`

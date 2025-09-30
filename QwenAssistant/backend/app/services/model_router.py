@@ -1,41 +1,120 @@
 import os
-from typing import Dict, List
+import subprocess
+import sys
+from typing import Dict, List, Generator, Optional
 from app.core.config import settings
+from pydantic import BaseModel
+from pathlib import Path
+
+
+class ModelInferenceResult(BaseModel):
+    """Result from model inference"""
+    response: str
+    tokens_used: int
+    execution_time: float
+
 
 class ModelRouter:
     """
     Routes requests to appropriate models based on hardware profile and task type
+    Uses llama.cpp for GGUF model execution
     """
     
     def __init__(self):
         self.models = self._load_models()
+        self.llama_cpp_path = self._find_llama_cpp()
         
+    def _find_llama_cpp(self) -> str:
+        """Find the llama.cpp executable"""
+        # Common paths where llama.cpp might be installed
+        possible_paths = [
+            "/usr/local/bin/llama",
+            "/opt/llama/bin/llama",
+            "./llama.cpp/main",  # Local build
+            settings.MODEL_PATH + "/llama.cpp/main",  # Model directory
+            # Check if it's in system PATH
+            "llama",
+            "llama-cli",
+            "llama-gguf"
+        ]
+        
+        for path in possible_paths:
+            if Path(path).exists():
+                return path
+        
+        # If not found, try to install llama.cpp
+        self._install_llama_cpp()
+        return "llama"
+    
+    def _install_llama_cpp(self):
+        """Install llama.cpp if not found"""
+        print("Installing llama.cpp...")
+        try:
+            # Clone the repository
+            subprocess.run(["git", "clone", "https://github.com/ggerganov/llama.cpp.git"], check=True)
+            os.chdir("llama.cpp")
+            # Build llama.cpp
+            subprocess.run(["make"], check=True)
+            os.chdir("..")
+            print("llama.cpp installed successfully")
+        except subprocess.CalledProcessError:
+            print("Failed to install llama.cpp automatically. Please install manually.")
+            raise
+    
     def _load_models(self) -> Dict:
-        """Load available models"""
-        # In a real implementation, this would scan the models directory
-        # and load model metadata
-        return {
-            "light": {
-                "chat": "llama-3.2-3b",
-                "coding": "starcoder2-3b",  # or tinyllama-1.1b-code
-                "reasoning": "phi-3-mini-3.8b"
-            },
-            "medium": {
-                "chat": "mistral-7b-instruct",
-                "coding": "codellama-7b",  # or phi-3-medium-4k
-                "reasoning": "mixtral-8x7b"
-            },
-            "heavy": {
-                "chat": "llama-3.3-70b",  # if 16GB+ VRAM available
-                "coding": "codellama-13b",  # or deepseek-coder-v2-1.9b
-                "reasoning": "llama-4-maverick-402b"  # if 16GB+ VRAM available
-            },
-            "npu-optimized": {
-                "chat": "optimized-phi-3-mini",  # or similar optimized model
-                "coding": "optimized-codellama-7b",  # NPU-optimized version
-                "reasoning": "optimized-phi-3-mini"  # or similar optimized model
-            }
+        """Load available models from the models directory"""
+        models_path = Path(settings.MODEL_PATH)
+        available_models = {
+            "light": {},
+            "medium": {},
+            "heavy": {},
+            "npu-optimized": {}
         }
+        
+        # In a real implementation, this would scan the models directory
+        # for GGUF files and categorize them based on size and requirements
+        if models_path.exists():
+            # Look for .gguf files in the models directory
+            gguf_files = list(models_path.glob("*.gguf"))
+            for file_path in gguf_files:
+                filename = file_path.stem
+                # Simplified categorization based on filename
+                if "3b" in filename or "1b" in filename:
+                    available_models["light"]["chat"] = filename
+                elif "7b" in filename:
+                    available_models["medium"]["chat"] = filename
+                elif "13b" in filename or "70b" in filename:
+                    available_models["heavy"]["chat"] = filename
+                else:
+                    # Default assignment
+                    available_models["medium"]["chat"] = filename
+        
+        # Default fallback models if none found in directory
+        if not any(available_models[profile] for profile in available_models):
+            available_models = {
+                "light": {
+                    "chat": "llama-3.2-3b",
+                    "coding": "starcoder2-3b",  # or tinyllama-1.1b-code
+                    "reasoning": "phi-3-mini-3.8b"
+                },
+                "medium": {
+                    "chat": "mistral-7b-instruct",
+                    "coding": "codellama-7b",  # or phi-3-medium-4k
+                    "reasoning": "mixtral-8x7b"
+                },
+                "heavy": {
+                    "chat": "llama-3.3-70b",  # if 16GB+ VRAM available
+                    "coding": "codellama-13b",  # or deepseek-coder-v2-1.9b
+                    "reasoning": "llama-4-maverick-402b"  # if 16GB+ VRAM available
+                },
+                "npu-optimized": {
+                    "chat": "optimized-phi-3-mini",  # or similar optimized model
+                    "coding": "optimized-codellama-7b",  # NPU-optimized version
+                    "reasoning": "optimized-phi-3-mini"  # or similar optimized model
+                }
+            }
+        
+        return available_models
         
     def select_model(self, profile: str, task_type: str) -> str:
         """
@@ -57,9 +136,72 @@ class ModelRouter:
         
     def get_model_path(self, model_name: str) -> str:
         """Get path to model file"""
-        # In a real implementation, this would return the actual path
-        # to the model file in the models directory
         return os.path.join(settings.MODEL_PATH, f"{model_name}.gguf")
+    
+    def _run_llama_inference(self, model_path: str, prompt: str, max_tokens: int = 256) -> ModelInferenceResult:
+        """
+        Run inference using llama.cpp
+        """
+        import time
+        start_time = time.time()
+        
+        try:
+            # Prepare the llama.cpp command
+            cmd = [
+                self.llama_cpp_path,
+                "-m", model_path,
+                "-p", prompt,
+                "-n", str(max_tokens),
+                "--temp", "0.7",
+                "--repeat-penalty", "1.1"
+            ]
+            
+            # Add hardware-specific optimizations based on available resources
+            import psutil
+            cpu_count = psutil.cpu_count()
+            if cpu_count:
+                cmd.extend(["-t", str(max(1, cpu_count // 2))])  # Use half of CPU cores
+            
+            # Run the llama.cpp command
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minute timeout
+            )
+            
+            execution_time = time.time() - start_time
+            
+            if result.returncode != 0:
+                raise Exception(f"llama.cpp failed with error: {result.stderr}")
+            
+            response = result.stdout.strip()
+            # Estimate tokens used (simple heuristic)
+            tokens_used = len(response.split())
+            
+            return ModelInferenceResult(
+                response=response,
+                tokens_used=tokens_used,
+                execution_time=execution_time
+            )
+            
+        except subprocess.TimeoutExpired:
+            raise Exception("Model inference timed out")
+        except Exception as e:
+            raise Exception(f"Error during model inference: {str(e)}")
+    
+    def generate_response(self, profile: str, task_type: str, prompt: str, max_tokens: int = 256) -> ModelInferenceResult:
+        """
+        Generate a response from the appropriate model
+        """
+        model_name = self.select_model(profile, task_type)
+        model_path = self.get_model_path(model_name)
+        
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Model file not found: {model_path}")
+        
+        return self._run_llama_inference(model_path, prompt, max_tokens)
+
 
 # Example usage
 if __name__ == "__main__":

@@ -117,6 +117,7 @@ Results are aggregated, ranked by relevance, with citations, summaries, and conf
 - **Database**: [SQLite](https://www.sqlite.org/) with [SQLModel](https://sqlmodel.tiangolo.com/)
 - **AI Inference**: [ONNX Runtime](https://onnxruntime.ai/), [llama.cpp](https://github.com/ggerganov/llama.cpp)
 - **Containerization**: [Docker](https://www.docker.com/)
+- **Dependency Management**: Python virtual environment (`.venv`) for isolation
 
 ### Frontend
 - **Desktop Framework**: [Tauri](https://tauri.app/) (Rust + React)
@@ -129,6 +130,24 @@ Results are aggregated, ranked by relevance, with citations, summaries, and conf
 - **Voice Models**: Whisper (STT), Piper (TTS)
 - **Wake Word**: Local implementation for privacy-focused activation
 - **Model Format**: GGUF for optimal local performance
+
+## Development Workflow
+
+The project uses a Python virtual environment in the backend to ensure dependency isolation and consistency across different development environments.
+
+To set up the development environment:
+
+```bash
+make setup
+```
+
+This creates a virtual environment in `backend/.venv` and installs all required dependencies.
+
+For development:
+
+```bash
+make dev  # Runs both backend and frontend in development mode
+```
 
 ## Design Principles
 
@@ -151,6 +170,23 @@ Results are aggregated, ranked by relevance, with citations, summaries, and conf
 - Graceful degradation under resource constraints
 - Automatic error recovery and user feedback
 - Consistent performance across supported platforms
+
+## Implementation Status
+
+The project has made significant progress with working implementations of:
+- Backend services (hardware detection, chat API, voice processing, privacy controls)
+- Frontend chat interface with voice capabilities
+- Model routing system based on hardware profiles
+- Memory and privacy services
+- Basic database integration with SQLite
+
+### Remaining Components
+- Semantic search functionality (vector embeddings)
+- Redis integration for caching
+- Complete NPU detection
+- Wake word detection implementation
+- Cross-platform desktop app distribution
+- Comprehensive testing suite
 
 ## Future Enhancements
 

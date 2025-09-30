@@ -2,8 +2,18 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+import uuid
+from app.services.memory_service import memory_service
 
 router = APIRouter()
+
+class Message(BaseModel):
+    id: str
+    role: str  # "user" or "assistant"
+    content: str
+    timestamp: datetime
+    tokens: Optional[int] = None
+    mode: Optional[str] = "chat"  # "chat", "coding", "reasoning"
 
 class MemoryItem(BaseModel):
     id: str
@@ -17,46 +27,87 @@ class Conversation(BaseModel):
     title: str
     created_at: datetime
     updated_at: datetime
+    messages: List[Message] = []
+
+class MemorySearchRequest(BaseModel):
+    query: str
+
+class MemorySearchResponse(BaseModel):
+    results: List[Message]
 
 @router.get("/conversations", response_model=List[Conversation])
 async def get_conversations():
     """
     Get all conversations
     """
-    # This is a placeholder implementation
-    return [
-        Conversation(
-            id="conv_1",
-            title="Project Discussion",
-            created_at=datetime.now(),
-            updated_at=datetime.now()
+    db_conversations = memory_service.get_conversations()
+    response_conversations = []
+    for conv in db_conversations:
+        # Get messages for each conversation
+        db_messages = memory_service.get_messages(conv.id)
+        messages = [
+            Message(
+                id=msg.id,
+                role=msg.role,
+                content=msg.content,
+                timestamp=msg.timestamp,
+                tokens=msg.tokens,
+                mode=msg.mode
+            )
+            for msg in db_messages
+        ]
+        response_conversations.append(
+            Conversation(
+                id=conv.id,
+                title=conv.title,
+                created_at=conv.created_at,
+                updated_at=conv.updated_at,
+                messages=messages
+            )
         )
-    ]
+    return response_conversations
 
 @router.get("/conversation/{conversation_id}")
 async def get_conversation(conversation_id: str):
     """
     Get a specific conversation by ID
     """
-    # This is a placeholder implementation
+    db_conversation = memory_service.get_conversation(conversation_id)
+    if not db_conversation:
+        return {
+            "error": "Conversation not found",
+            "id": conversation_id
+        }
+    
+    # Get messages for the conversation
+    db_messages = memory_service.get_messages(conversation_id)
+    messages = [
+        Message(
+            id=msg.id,
+            role=msg.role,
+            content=msg.content,
+            timestamp=msg.timestamp,
+            tokens=msg.tokens,
+            mode=msg.mode
+        )
+        for msg in db_messages
+    ]
+    
     return {
-        "id": conversation_id,
-        "title": "Sample Conversation",
-        "created_at": datetime.now(),
-        "updated_at": datetime.now(),
+        "id": db_conversation.id,
+        "title": db_conversation.title,
+        "created_at": db_conversation.created_at,
+        "updated_at": db_conversation.updated_at,
         "messages": [
             {
-                "id": "msg_1",
-                "role": "user",
-                "content": "Hello, how can you help me?",
-                "timestamp": datetime.now()
-            },
-            {
-                "id": "msg_2",
-                "role": "assistant",
-                "content": "I can help you with various tasks. What do you need?",
-                "timestamp": datetime.now()
+                "id": msg.id,
+                "role": msg.role,
+                "content": msg.content,
+                "timestamp": msg.timestamp,
+                "tokens": msg.tokens,
+                "mode": msg.mode
             }
+            for msg in messages
         ]
     }
 
@@ -65,13 +116,51 @@ async def save_memory(item: MemoryItem):
     """
     Save a memory item
     """
-    # This is a placeholder implementation
-    return {"status": "saved", "id": item.id}
+    # This would integrate with full memory system including vector storage
+    # For now, we're using conversation storage as a placeholder
+    conversation = memory_service.store_conversation(item.content[:50])  # Use first 50 chars as title
+    # Add the full content as a message in the conversation
+    memory_service.add_message(conversation.id, "memory", item.content)
+    return {"status": "saved", "id": conversation.id}
 
 @router.get("/search")
 async def search_memory(query: str):
     """
-    Search memory items
+    Search memory items - performs semantic search across stored conversations
     """
-    # This is a placeholder implementation
-    return {"results": [], "query": query}
+    # In a full implementation, this would use vector embeddings
+    # For now, it returns an empty list
+    results = memory_service.semantic_search(query)
+    return {
+        "results": [
+            {
+                "id": result.id,
+                "role": result.role,
+                "content": result.content,
+                "timestamp": result.timestamp,
+                "tokens": result.tokens,
+                "mode": result.mode
+            }
+            for result in results
+        ],
+        "query": query
+    }
+
+@router.post("/search", response_model=MemorySearchResponse)
+async def search_memory_post(request: MemorySearchRequest):
+    """
+    Search memory using POST with request body
+    """
+    results = memory_service.semantic_search(request.query)
+    response_results = [
+        Message(
+            id=result.id,
+            role=result.role,
+            content=result.content,
+            timestamp=result.timestamp,
+            tokens=result.tokens,
+            mode=result.mode
+        )
+        for result in results
+    ]
+    return MemorySearchResponse(results=response_results)
