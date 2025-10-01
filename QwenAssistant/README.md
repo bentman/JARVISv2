@@ -7,7 +7,7 @@ A privacy-focused, local-first AI assistant that runs entirely on your hardware 
 
 ## 🚀 Overview
 
-The Local AI Assistant is a cutting-edge AI application that provides chat, voice interaction, and reasoning capabilities while ensuring all data processing occurs locally on your device. Built with privacy as the core principle, it offers a compelling alternative to cloud-based AI assistants.
+The Local AI Assistant is a cutting-edge AI application that provides chat, reasoning, and coding tasks with voice interaction while ensuring all data processing occurs locally on your device. Built with privacy as the core principle, it offers a compelling alternative to cloud-based AI assistants. The assistant adapts to hardware configurations (CPU, GPU, NPU) for optimal performance across Windows, macOS, and Linux.
 
 This project has made significant progress with core functionality implemented. The documentation provides a roadmap of planned features and capabilities.
 
@@ -51,7 +51,7 @@ This project has made significant progress with core functionality implemented. 
 
 - [Project_Components.md](Project_Components.md) - System architecture and components
 - [Project_Detail.md](Project_Detail.md) - System design and vision
-- [QWEN.md](QWEN.md) - AI coding assistant instructions
+- [WARP.md](WARP.md) - AI coding assistant instructions
 
 ## 📄 License
 

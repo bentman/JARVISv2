@@ -62,8 +62,9 @@ class ModelRouter:
             raise
     
     def _load_models(self) -> Dict:
-        """Load available models from the models directory"""
+        """Load available models from the models directory (recursive) and record file paths"""
         models_path = Path(settings.MODEL_PATH)
+        self.model_paths: Dict[str, str] = {}
         available_models = {
             "light": {},
             "medium": {},
@@ -71,46 +72,45 @@ class ModelRouter:
             "npu-optimized": {}
         }
         
-        # In a real implementation, this would scan the models directory
-        # for GGUF files and categorize them based on size and requirements
+        # Recursively scan for .gguf files and categorize by filename hints
         if models_path.exists():
-            # Look for .gguf files in the models directory
-            gguf_files = list(models_path.glob("*.gguf"))
+            gguf_files = list(models_path.rglob("*.gguf"))
             for file_path in gguf_files:
                 filename = file_path.stem
+                # Record exact path for retrieval
+                self.model_paths[filename] = str(file_path)
                 # Simplified categorization based on filename
-                if "3b" in filename or "1b" in filename:
-                    available_models["light"]["chat"] = filename
+                if any(tag in filename for tag in ["1b", "2b", "3b"]):
+                    available_models["light"].setdefault("chat", filename)
                 elif "7b" in filename:
-                    available_models["medium"]["chat"] = filename
-                elif "13b" in filename or "70b" in filename:
-                    available_models["heavy"]["chat"] = filename
+                    available_models["medium"].setdefault("chat", filename)
+                elif any(tag in filename for tag in ["13b", "30b", "70b"]):
+                    available_models["heavy"].setdefault("chat", filename)
                 else:
-                    # Default assignment
-                    available_models["medium"]["chat"] = filename
+                    available_models["medium"].setdefault("chat", filename)
         
         # Default fallback models if none found in directory
         if not any(available_models[profile] for profile in available_models):
             available_models = {
                 "light": {
                     "chat": "llama-3.2-3b",
-                    "coding": "starcoder2-3b",  # or tinyllama-1.1b-code
+                    "coding": "starcoder2-3b",
                     "reasoning": "phi-3-mini-3.8b"
                 },
                 "medium": {
                     "chat": "mistral-7b-instruct",
-                    "coding": "codellama-7b",  # or phi-3-medium-4k
+                    "coding": "codellama-7b",
                     "reasoning": "mixtral-8x7b"
                 },
                 "heavy": {
-                    "chat": "llama-3.3-70b",  # if 16GB+ VRAM available
-                    "coding": "codellama-13b",  # or deepseek-coder-v2-1.9b
-                    "reasoning": "llama-4-maverick-402b"  # if 16GB+ VRAM available
+                    "chat": "llama-3.3-70b",
+                    "coding": "codellama-13b",
+                    "reasoning": "llama-4-maverick-402b"
                 },
                 "npu-optimized": {
-                    "chat": "optimized-phi-3-mini",  # or similar optimized model
-                    "coding": "optimized-codellama-7b",  # NPU-optimized version
-                    "reasoning": "optimized-phi-3-mini"  # or similar optimized model
+                    "chat": "optimized-phi-3-mini",
+                    "coding": "optimized-codellama-7b",
+                    "reasoning": "optimized-phi-3-mini"
                 }
             }
         
@@ -126,6 +126,11 @@ class ModelRouter:
             # Fallback to chat model
             return self.models[profile].get("chat", "llama-3.2-3b")
             
+    def get_model_path(self, model_name: str) -> str:
+        """Get path to model file"""
+        if hasattr(self, "model_paths") and model_name in self.model_paths:
+            return self.model_paths[model_name]
+        return os.path.join(settings.MODEL_PATH, f"{model_name}.gguf")
     def get_available_models(self) -> List[str]:
         """Get list of all available models"""
         models = set()

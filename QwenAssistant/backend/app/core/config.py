@@ -14,6 +14,12 @@ class Settings(BaseSettings):
     # Model paths
     MODEL_PATH: str = "/models"
     
+    # Embeddings / Vector index
+    EMBEDDING_DIM: int = 768
+    EMBEDDING_MODEL_PATH: Optional[str] = None  # If None, defaults to f"{MODEL_PATH}/embedding.onnx" in code
+    VECTOR_INDEX_PATH: str = "./data/vector.index"
+    VECTOR_META_PATH: str = "./data/vector_meta.json"
+    
     class Config:
         case_sensitive = True
         env_file = ".env"

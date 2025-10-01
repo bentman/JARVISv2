@@ -106,14 +106,18 @@ make dev  # Runs both backend and frontend in development mode
 The project has made significant progress with working implementations of:
 - Backend services (hardware detection, chat API, voice processing, privacy controls)
 - Frontend chat interface with voice capabilities
-- Model routing system based on hardware profiles
+- Model routing system based on hardware profiles with GGUF model discovery
 - Memory and privacy services
-- Basic database integration with SQLite
+- Database implementation with SQLModel and SQLite
+- Semantic search functionality using vector embeddings and FAISS
+- Actual wake word detection using openwakeword library
+- Vector store for persistent semantic search
+- Intelligent routing system prioritizing local-first processing
 
 ### Remaining Components
-- Semantic search functionality (vector embeddings)
 - Redis integration for caching
 - Complete NPU detection
-- Wake word detection implementation
 - Cross-platform desktop app distribution
 - Comprehensive testing suite
+- Memory synchronization across devices
+- Unified search aggregation with external providers

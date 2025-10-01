@@ -17,16 +17,20 @@ pydantic-settings>=2.0.0
 psutil>=5.9.0
 GPUtil>=1.4.0
 
-# AI Inference
+# AI Inference & Vectors
 onnxruntime>=1.16.0
 numpy>=1.24.0
 tokenizers>=0.15.0
+faiss-cpu>=1.7.4
 
 # Security
 pycryptodome>=3.18.0
 python-jose>=3.3.0
 passlib>=1.7.4
 python-multipart>=0.0.6
+
+# Voice / Wake Word (local-first)
+openwakeword>=0.6.0
 
 # Utilities
 requests>=2.31.0
