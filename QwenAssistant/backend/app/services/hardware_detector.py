@@ -84,31 +84,39 @@ class HardwareDetector:
                 
     def _has_npu(self) -> bool:
         """
-        Check for NPU (Neural Processing Unit) availability
-        This is a simplified check - in a real implementation, 
-        you would use vendor-specific APIs to detect NPUs
+        Best-effort NPU detection.
+        - Honors explicit override via settings.NPU_FORCE_ENABLE
+        - Tries OpenVINO device query if openvino.runtime is available
+        - Falls back to simple heuristics on CPU/SoC names
         """
-        # Check for common NPU indicators in CPU architecture
+        from app.core.config import settings
+        if getattr(settings, "NPU_FORCE_ENABLE", False):
+            return True
+        # Try OpenVINO device query
+        try:
+            import importlib
+            ov = importlib.import_module("openvino.runtime")
+            core = ov.Core()
+            devices = core.available_devices
+            # Common OpenVINO logical device names include: CPU, GPU, NPU, GNA, AUTO, etc.
+            for dev in devices:
+                if "NPU" in dev.upper() or "GNA" in dev.upper():
+                    return True
+        except Exception:
+            pass
+        # Simple CPU/SoC heuristic
         architecture = self.cpu_info.get("architecture", "").lower()
-        
-        # Additional checks could include:
-        # - Intel processors with AI Boost/Acceleration
-        # - ARM processors with NPU
-        # - Qualcomm processors with AI engine
-        # - Apple processors with Neural Engine
-        
-        # For now, this is a placeholder that would need to be
-        # implemented with vendor-specific detection
-        return "npu" in architecture or self._check_vendor_npu()
+        cpu_vendor_str = platform.processor().lower()
+        hints = ["neural", "npu", "ai engine", "ai boost", "hexagon"]
+        if any(h in cpu_vendor_str for h in hints) or "npu" in architecture:
+            return True
+        return False
         
     def _check_vendor_npu(self) -> bool:
         """
-        Check for vendor-specific NPUs
+        Deprecated: retained for backward compatibility; handled in _has_npu.
         """
-        # This would contain vendor-specific NPU detection logic
-        # For example, using Intel OpenVINO, ARM Compute Library, etc.
-        # Placeholder implementation
-        return False
+        return self._has_npu()
                 
     def get_capabilities(self) -> Dict:
         """Get full hardware capabilities"""

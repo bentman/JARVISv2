@@ -109,15 +109,18 @@ The project has made significant progress with working implementations of:
 - Model routing system based on hardware profiles with GGUF model discovery
 - Memory and privacy services
 - Database implementation with SQLModel and SQLite
-- Semantic search functionality using vector embeddings and FAISS
+- Semantic search functionality using vector embeddings and FAISS (with Redis-backed caching)
 - Actual wake word detection using openwakeword library
 - Vector store for persistent semantic search
 - Intelligent routing system prioritizing local-first processing
+- Redis cache service for chat and semantic search
+- Budget monitoring service and endpoints
+- Model discovery and selection endpoints
+- Minimal Tauri configuration for desktop app launch
 
 ### Remaining Components
-- Redis integration for caching
-- Complete NPU detection
-- Cross-platform desktop app distribution
+- Enhanced NPU detection with vendor SDKs (optional OpenVINO support)
+- Cross-platform desktop app distribution and installers
 - Comprehensive testing suite
 - Memory synchronization across devices
 - Unified search aggregation with external providers

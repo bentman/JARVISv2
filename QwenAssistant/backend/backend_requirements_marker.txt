@@ -1,0 +1,3 @@
+This file only serves to keep track of edits made programmatically.
+NPU detection updated to attempt OpenVINO query if present.
+Budget endpoints wired.

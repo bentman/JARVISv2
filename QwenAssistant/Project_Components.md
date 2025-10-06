@@ -38,10 +38,12 @@ The Local AI Assistant follows a modular architecture with distinct backend serv
 5. **Privacy Service**: Data classification, encryption, and local processing enforcement
 6. **Embedding Service**: Lightweight, local-first embedding service using feature hashing
 7. **Vector Store**: FAISS-based vector store for semantic search with persistent storage
+8. **Cache Service**: Redis-backed short-term caching for chat and semantic search
+9. **Budget Service**: Cost tracking with configuration and reporting endpoints
 
 ### Memory Management System
 
-- **Short-term Cache**: Redis cache for frequent queries, context maintenance, and quick access to recent snippets (planned)
+- **Short-term Cache**: Redis cache for frequent queries, context maintenance, and quick access to recent snippets
 - **Vector Storage**: Embeddings in searchable backend for semantic retrieval and semantic similarity
 - **Long-term Persistence**: Structured storage for conversation history with tagging, filtering, and export capabilities
 - **Memory Synchronization**: Framework for syncing memory across devices, with versioning and conflict resolution (planned)

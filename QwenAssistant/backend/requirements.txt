@@ -31,11 +31,14 @@ python-multipart>=0.0.6
 
 # Voice / Wake Word (local-first)
 openwakeword>=0.6.0
+# Optional: OpenVINO for NPU detection if available (heavy). Leave commented to avoid large images.
+# openvino>=2024.0.0
 
 # Utilities
 requests>=2.31.0
 python-dotenv>=1.0.0
 typer>=0.9.0
+redis>=5.0.0
 
 # Testing
 pytest>=7.4.0
