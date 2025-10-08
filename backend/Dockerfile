@@ -1,0 +1,69 @@
+# -------- Whisper.cpp build stage --------
+FROM debian:stable-slim AS whisper_builder
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake git ca-certificates && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt
+RUN git clone https://github.com/ggerganov/whisper.cpp.git
+WORKDIR /opt/whisper.cpp
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release \
+ && cmake --build build -j
+
+
+# -------- llama.cpp build stage --------
+FROM debian:stable-slim AS llama_builder
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake git ca-certificates && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt
+RUN git clone https://github.com/ggerganov/llama.cpp.git
+WORKDIR /opt/llama.cpp
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF \
+ && cmake --build build -j
+
+# -------- Piper build stage --------
+FROM debian:stable-slim AS piper_builder
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake git ca-certificates libsndfile1 && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt
+RUN git clone https://github.com/rhasspy/piper.git
+WORKDIR /opt/piper/src/cpp
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release \
+ && cmake --build build -j
+
+# -------- Final runtime image --------
+FROM python:3.11-slim
+WORKDIR /app
+
+# System deps for FAISS and audio libs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libsndfile1 \
+    espeak-ng \
+    git \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy executables from builders
+COPY --from=whisper_builder /opt/whisper.cpp/build/bin/whisper-cli /usr/local/bin/whisper
+# Copy Whisper shared libraries and build tree for any nested libs
+COPY --from=whisper_builder /opt/whisper.cpp/build/*.so* /usr/local/lib/
+COPY --from=whisper_builder /opt/whisper.cpp/build/ /opt/whisper/
+
+# Copy llama build outputs
+COPY --from=llama_builder /opt/llama.cpp/build/bin/ /usr/local/bin/
+COPY --from=llama_builder /opt/llama.cpp/build/ /opt/llama/
+
+# Copy piper binary
+COPY --from=piper_builder /opt/piper/src/cpp/build/piper /usr/local/bin/piper
+
+# Set library path and refresh cache
+ENV LD_LIBRARY_PATH="/usr/local/lib:/opt/whisper/bin:/opt/whisper/lib:/opt/llama/lib:/opt/llama/bin:/usr/local/bin:${LD_LIBRARY_PATH}"
+RUN ldconfig
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

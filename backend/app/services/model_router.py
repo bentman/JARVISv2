@@ -1,0 +1,314 @@
+import os
+import subprocess
+import sys
+from typing import Dict, List, Generator, Optional
+from app.core.config import settings
+from pydantic import BaseModel
+from pathlib import Path
+
+
+class ModelInferenceResult(BaseModel):
+    """Result from model inference"""
+    response: str
+    tokens_used: int
+    execution_time: float
+
+
+class ModelRouter:
+    """
+    Routes requests to appropriate models based on hardware profile and task type
+    Uses llama.cpp for GGUF model execution
+    """
+    
+    def __init__(self):
+        self.models = self._load_models()
+        self.llama_cpp_path = self._find_llama_cpp()
+        
+    def _find_llama_cpp(self) -> str:
+        """Find the llama.cpp executable"""
+        # Common paths where llama.cpp might be installed
+        possible_paths = [
+            "/usr/local/bin/llama-cli",
+            "/opt/llama/bin/llama-cli",
+            "/usr/local/bin/llama",
+            "/opt/llama/bin/llama",
+            "./llama.cpp/main",  # Local build
+            settings.MODEL_PATH + "/llama.cpp/main",  # Model directory
+            # Check if it's in system PATH
+            "llama-cli",
+            "llama",
+            "llama-gguf"
+        ]
+        
+        for path in possible_paths:
+            if Path(path).exists():
+                return path
+        
+        # If not found, try to install llama.cpp
+        self._install_llama_cpp()
+        return "llama"
+    
+    def _install_llama_cpp(self):
+        """Install llama.cpp if not found"""
+        print("Installing llama.cpp...")
+        try:
+            # Clone the repository
+            subprocess.run(["git", "clone", "https://github.com/ggerganov/llama.cpp.git"], check=True)
+            os.chdir("llama.cpp")
+            # Build llama.cpp
+            subprocess.run(["make"], check=True)
+            os.chdir("..")
+            print("llama.cpp installed successfully")
+        except subprocess.CalledProcessError:
+            print("Failed to install llama.cpp automatically. Please install manually.")
+            raise
+    
+    def _load_models(self) -> Dict:
+        """Load available models from the models directory (recursive) and record file paths+hashes.
+        If checksums.json is present under MODEL_PATH, use it as authoritative expected hashes.
+        """
+        import hashlib, json
+        models_path = Path(settings.MODEL_PATH)
+        self.model_paths: Dict[str, str] = {}
+        self.model_hashes: Dict[str, str] = {}
+        # Load expected hashes from checksums.json if present
+        checksums_path = models_path / 'checksums.json'
+        expected_hashes = {}
+        if checksums_path.exists():
+            try:
+                expected_hashes = json.loads(checksums_path.read_text(encoding='utf-8'))
+            except Exception:
+                expected_hashes = {}
+        available_models = {
+            "light": {},
+            "medium": {},
+            "heavy": {},
+            "npu-optimized": {}
+        }
+        
+        # Recursively scan for .gguf files and categorize by filename hints
+        if models_path.exists():
+            gguf_files = list(models_path.rglob("*.gguf"))
+            for file_path in gguf_files:
+                filename = file_path.stem
+                # Record exact path for retrieval
+                self.model_paths[filename] = str(file_path)
+                # Expected vs computed hash
+                computed = None
+                if filename + '.gguf' in expected_hashes:
+                    self.model_hashes[filename] = expected_hashes[filename + '.gguf']
+                else:
+                    h = hashlib.sha256()
+                    with open(file_path, 'rb') as f:
+                        for chunk in iter(lambda: f.read(1024 * 1024), b''):
+                            h.update(chunk)
+                    computed = h.hexdigest()
+                    self.model_hashes[filename] = computed
+                # Simplified categorization based on filename
+                if any(tag in filename for tag in ["1b", "2b", "3b"]):
+                    available_models["light"].setdefault("chat", filename)
+                elif "7b" in filename:
+                    available_models["medium"].setdefault("chat", filename)
+                elif any(tag in filename for tag in ["13b", "30b", "70b"]):
+                    available_models["heavy"].setdefault("chat", filename)
+                else:
+                    available_models["medium"].setdefault("chat", filename)
+        
+        # Default fallback models if none found in directory
+        if not any(available_models[profile] for profile in available_models):
+            available_models = {
+                "light": {
+                    "chat": "llama-3.2-3b",
+                    "coding": "starcoder2-3b",
+                    "reasoning": "phi-3-mini-3.8b"
+                },
+                "medium": {
+                    "chat": "mistral-7b-instruct",
+                    "coding": "codellama-7b",
+                    "reasoning": "mixtral-8x7b"
+                },
+                "heavy": {
+                    "chat": "llama-3.3-70b",
+                    "coding": "codellama-13b",
+                    "reasoning": "llama-4-maverick-402b"
+                },
+                "npu-optimized": {
+                    "chat": "optimized-phi-3-mini",
+                    "coding": "optimized-codellama-7b",
+                    "reasoning": "optimized-phi-3-mini"
+                }
+            }
+        
+        return available_models
+        
+    def select_model(self, profile: str, task_type: str) -> str:
+        """
+        Select appropriate model based on profile and task type.
+        Prefer discovered models if profile mapping is missing.
+        """
+        if profile in self.models and task_type in self.models[profile]:
+            return self.models[profile][task_type]
+        # Fallback to chat model for the profile
+        if profile in self.models and "chat" in self.models[profile]:
+            return self.models[profile]["chat"]
+        # If no mapping exists, but we discovered any .gguf models, pick the first discovered filename
+        if hasattr(self, "model_paths") and self.model_paths:
+            return next(iter(self.model_paths.keys()))
+        # Final fallback to a default name (may not exist on disk)
+        return "llama-3.2-3b"
+            
+    def get_model_path(self, model_name: str) -> str:
+        """Get path to model file"""
+        if hasattr(self, "model_paths") and model_name in self.model_paths:
+            return self.model_paths[model_name]
+        return os.path.join(settings.MODEL_PATH, f"{model_name}.gguf")
+
+    def get_available_models(self) -> List[str]:
+        """Get list of all available models"""
+        models = set()
+        for profile in self.models.values():
+            for model in profile.values():
+                models.add(model)
+        return list(models)
+    
+    def _run_llama_inference(self, model_path: str, prompt: str, max_tokens: int = 256) -> ModelInferenceResult:
+        """
+        Run inference using llama.cpp
+        """
+        import time
+        start_time = time.time()
+        
+        try:
+            # Prepare the llama.cpp command
+            cmd = [
+                self.llama_cpp_path,
+                "-m", model_path,
+                "-p", prompt,
+                "-n", str(max_tokens),
+                "--temp", "0.7",
+                "--repeat-penalty", "1.1"
+            ]
+            
+            # Add hardware-specific optimizations based on available resources
+            import psutil
+            cpu_count = psutil.cpu_count()
+            if cpu_count:
+                cmd.extend(["-t", str(max(1, cpu_count // 2))])  # Use half of CPU cores
+            
+            # Run the llama.cpp command
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minute timeout
+            )
+            
+            execution_time = time.time() - start_time
+            
+            if result.returncode != 0:
+                raise Exception(f"llama.cpp failed with error: {result.stderr}")
+            
+            response = result.stdout.strip()
+            # Estimate tokens used (simple heuristic)
+            tokens_used = len(response.split())
+            
+            return ModelInferenceResult(
+                response=response,
+                tokens_used=tokens_used,
+                execution_time=execution_time
+            )
+            
+        except subprocess.TimeoutExpired:
+            raise Exception("Model inference timed out")
+        except Exception as e:
+            raise Exception(f"Error during model inference: {str(e)}")
+    
+    def _run_llama_inference_stream(self, model_path: str, prompt: str, max_tokens: int = 256):
+        """
+        Streaming inference using llama.cpp stdout. Yields text chunks.
+        """
+        import psutil
+        import time
+        start_time = time.time()
+        cmd = [
+            self.llama_cpp_path,
+            "-m", model_path,
+            "-p", prompt,
+            "-n", str(max_tokens),
+            "--temp", "0.7",
+            "--repeat-penalty", "1.1"
+        ]
+        cpu_count = psutil.cpu_count()
+        if cpu_count:
+            cmd.extend(["-t", str(max(1, cpu_count // 2))])
+        # Use unbuffered text reading
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1
+        )
+        try:
+            if not proc.stdout:
+                return
+            for line in proc.stdout:
+                if line:
+                    yield line
+            proc.wait(timeout=300)
+        except Exception:
+            try:
+                proc.kill()
+            except Exception:
+                pass
+            raise
+    
+    def generate_response(self, profile: str, task_type: str, prompt: str, max_tokens: int = 256) -> ModelInferenceResult:
+        """
+        Generate a response from the appropriate model
+        """
+        import hashlib
+        model_name = self.select_model(profile, task_type)
+        model_path = self.get_model_path(model_name)
+        
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Model file not found: {model_path}")
+        
+        # Verify integrity if we have a stored hash
+        expected_hash = getattr(self, 'model_hashes', {}).get(model_name)
+        if expected_hash:
+            h = hashlib.sha256()
+            with open(model_path, 'rb') as f:
+                for chunk in iter(lambda: f.read(1024 * 1024), b''):
+                    h.update(chunk)
+            current_hash = h.hexdigest()
+            if current_hash != expected_hash:
+                raise Exception(f"Model file integrity check failed for {model_name}. Expected {expected_hash}, got {current_hash}.")
+        
+        return self._run_llama_inference(model_path, prompt, max_tokens)
+    
+    def generate_response_stream(self, profile: str, task_type: str, prompt: str, max_tokens: int = 256):
+        """
+        Generator that streams model output as text chunks.
+        """
+        import hashlib
+        model_name = self.select_model(profile, task_type)
+        model_path = self.get_model_path(model_name)
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Model file not found: {model_path}")
+        expected_hash = getattr(self, 'model_hashes', {}).get(model_name)
+        if expected_hash:
+            h = hashlib.sha256()
+            with open(model_path, 'rb') as f:
+                for chunk in iter(lambda: f.read(1024 * 1024), b''):
+                    h.update(chunk)
+            current_hash = h.hexdigest()
+            if current_hash != expected_hash:
+                raise Exception(f"Model file integrity check failed for {model_name}. Expected {expected_hash}, got {current_hash}.")
+        yield from self._run_llama_inference_stream(model_path, prompt, max_tokens)
+
+
+# Example usage
+if __name__ == "__main__":
+    router = ModelRouter()
+    print(router.select_model("medium", "coding"))

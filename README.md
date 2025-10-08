@@ -1,161 +1,157 @@
-# JARVIS v2 - Local AI Assistant Experiments
+# Local AI Assistant
+
+A privacy-focused, local-first AI assistant that runs entirely on your hardware with no cloud dependencies.
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#)
 
-This repository serves as a collection of experimental projects exploring privacy-focused, local-first AI assistants. Each sub-project represents an incomplete implementation of an AI assistant, utilizing various AI providers and technologies to enable local processing, hardware adaptation, and multimodal interfaces (voice and chat). The intent is to leverage these experiments as references for iterative improvement and completion toward a unified, working AI assistant model.
+## 🚀 Overview
 
-## Key Features
+The Local AI Assistant is a cutting-edge AI application that provides chat, reasoning, and coding tasks with voice interaction while ensuring all data processing occurs locally on your device. Built with privacy as the core principle, it offers a compelling alternative to cloud-based AI assistants. The assistant adapts to hardware configurations (CPU, GPU, NPU) for optimal performance across Windows, macOS, and Linux.
 
-- **Local-First Processing**: All AI operations run locally on hardware to minimize external dependencies.
-- **Hardware Adaptive Model Selection**: Automatic circuit detection profiling capabilities for routing to optimized local/cloud models per device tier (light/medium/heavy/NPU).
-- **Intelligent Routing**: Local-first with policy-based escalation to cloud-lite (small models for gaps in reasoning/coding) or cloud-heavy (large models for complex analysis), balancing performance, privacy, and budget.
-- **Unified Search Aggregation**: Combines local conversation memory, vector embeddings, and web/cloud AI sources with ranked results, citations, and summaries.
-- **Voice-Enabled**: Support for voice input, output, wake word interactions, and continuous conversation modes.
-- **Privacy-Focused**: Emphasis on data security, encryption, and classification with selective escalation (redaction for sensitive data).
-- **Multimodal Interaction**: Combines text and voice for seamless, natural user experiences with real-time synchronization.
-- **Cross-Platform**: Designed for consistent functionality across Windows, macOS, and Linux with native performance.
+This project has made significant progress with core functionality implemented. The documentation provides a roadmap of planned features and capabilities.
 
-## Core Components and Architecture
+## 🌟 Key Features
 
-Common elements across experiments include:
+### 🔒 Privacy First
+- **Local Processing**: All AI inference happens on your device by default
+- **End-to-End Encryption**: Conversation data encrypted at rest
+- **No Cloud Dependencies**: Zero external data transmission by default
+- **Data Classification**: Automatic sensitive data detection and handling
 
-- **Local Inference and Privacy**: Emphasis on running AI models locally to avoid cloud dependencies, with end-to-end encryption where implemented.
-- **Hardware Adaptation**: Detection and optimization for CPU/GPU/NPU capabilities, selecting appropriate model sizes and performance tiers (e.g., light/medium/heavy profiles for varying compute power).
-- **Voice Interfaces**: Integration of speech-to-text and text-to-speech for hands-free interaction, including potential wake word detection.
-- **Chat Interfaces**: Multimodal input support combining text and voice, with persistent conversation history and real-time streaming.
-- **Backend Frameworks**: Primarily Python-based API services, with alternative implementations in other languages.
-- **Frontend Technologies**: Web-based or desktop applications for user interaction.
-- **Containerization**: Use of containerization for deployment consistency and isolation.
-- **Security and Memory**: Data classification, encryption, and storage management to ensure privacy and efficiency.
+### 🖥️ Hardware Adaptive
+- **Automatic Detection**: CPU/GPU/NPU capability detection
+- **Dynamic Model Selection**: Optimizes for your hardware configuration
+- **Performance Profiles**: 
+  - **Light**: For lower-end hardware
+  - **Medium**: For mid-range systems
+  - **Heavy**: For high-performance devices
+  - **NPU Optimized**: For neural processing units
+  - **API Integration**: Optional cloud fallback for unsupported tasks
 
-The overarching architecture centers on a modular design: AI model routing for hardware-optimized execution, memory services for context retention, and privacy layers for secure data handling.
+### 🎙️ Voice Interaction
+- **Wake Word Detection**: Hands-free activation with local processing
+- **Speech-to-Text**: Accurate voice recognition
+- **Text-to-Speech**: Natural voice responses
+- **Real-time Processing**: Low-latency voice interaction
 
-## Sub-Projects
+### ⚙️ System Services
+- **Redis Caching**: Short-term caching for chat responses and semantic search results
+- **Budget Monitoring**: Endpoints for usage tracking and budget configuration
+- **Model Discovery**: Endpoints to list discovered GGUF models and current selection
 
-Each sub-project explores a different AI provider or approach, with varying levels of completeness. Use these as references for refining and completing the concepts.
+### 💬 Rich Chat Interface
+- **Streaming Responses**: Real-time message updates
+- **Conversation History**: Persistent chat storage
+- **Multi-modal Input**: Voice and text support
 
-## Goal and Usage
+## 🛠️ Technology Stack
 
-These projects are incomplete experiments representing iterative attempts at building personal AI assistants. Reference them to identify patterns, technologies, and architectures for improvement. Contribute by enhancing existing implementations or developing unified solutions combining the best elements (e.g., hardware abstraction, voice handling, and provider flexibility).
+- **Backend**: FastAPI (Python), SQLite, ONNX Runtime
+- **Cache**: Redis (short-term result caching)
+- **Vector Store**: FAISS (semantic search index)
+- **Frontend**: Tauri (Rust + React), Tailwind CSS
+- **AI Models**: Llama 3.2, Mistral 7B, Whisper, Piper (CLI bundled in backend image)
+- **Containerization**: Docker
 
-### **QwenAssistant (High Completeness)**:
-Complete local AI assistant for chat and voice.
+## ✅ Quick smoke test
 
-  - tech:
-    - python fastapi backend
-    - react tauri frontend
-    - hardware model routing
-    - voice interfaces
-    - memory storage
+Status at a glance (dev):
+- Ready-to-use in development with local models required (see get-models scripts)
+- Voice TTS: Piper preferred when a voice .onnx is present; falls back to espeak-ng
+- Hardware detection: onnxruntime accelerators detected (CUDA/ROCm/DirectML/CoreML) and influence routing
+- Desktop packaging: CI workflow builds Tauri app for Win/macOS/Linux (unsigned artifacts)
+- Model integrity: checksums.json supported; verification scripts included
 
-  - docs:
-    - core: [QwenAssistant/README.md](QwenAssistant/README.md)
-    - project: [QwenAssistant/QWEN.md](QwenAssistant/QWEN.md)
-    - components: [QwenAssistant/Project_Components.md](QwenAssistant/Project_Components.md)
-    - detail: [QwenAssistant/Project_Detail.md](QwenAssistant/Project_Detail.md)
+Run the end-to-end validation after starting Docker services:
 
-### **ClaudeAssist (Medium Completeness)**:
-Local-first AI assistant for chat, voice, reasoning, coding.
+```
+# PowerShell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/smoke.ps1
+```
 
-  - tech:
-    - rust backend with ollama
-    - python react tauri frontend
-    - docker orchestration
-    - sqlite memory
-    - voice models
+Validates:
+- Health and model discovery (with model integrity info)
+- Chat (basic) and streaming parity
+- Retrieval-augmented responses and privacy redaction
+- Budget enforcement (429) and reset
+- Redis caching speedup (with tolerance)
+- Persistence across backend restarts
+- Voice STT/TTS (Piper when available, fallback via espeak-ng)
 
-  - docs:
-    - core: [ClaudeAssist/readme.md](ClaudeAssist/readme.md)
-    - project: [ClaudeAssist/claude.md](ClaudeAssist/claude.md)
+## 📖 Documentation
 
-### **GrokAssistMMP (Medium Completeness)**:
-Multi-modal AI assistant with chat, voice, reasoning, coding as local MMP.
+- User Guide: `docs/user/index.md`
+- Developer Setup: `docs/dev/setup.md`
+- API Reference: `docs/dev/api.md`
+- AI Assistant Rules: `warp.md`
+- Requirements (read-only): `Project.md`
+- Architecture: `docs/design/system-design.md`, `docs/design/components.md`
+- Packaging & Ops: `docs/dev/packaging.md`, `docs/dev/operations.md`
 
-  - tech:
-    - python backend orchestration
-    - rust tauri frontend
-    - docker routing
-    - voice loop
-    - memory services
+## 📄 License
 
-  - docs:
-    - project: [GrokAssistMMP/grok.md](GrokAssistMMP/grok.md)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### **GeminiAssist (Medium Completeness)**:
-AI chat/reasoning with web interface.
+## 🛠️ Development Setup
 
-  - tech:
-    - python backend api
-    - web frontend
-    - docker setup
+See Developer Setup for full instructions: `docs/dev/setup.md`
 
-  - docs:
-    - setup: [GeminiAssist/setup.sh](GeminiAssist/setup.sh)
+Highlights:
+- Backend + Redis via Docker Compose:
+  - Build and start services:
+    - `docker compose build backend`
+    - `docker compose up -d`
+  - Backend on http://localhost:8000 and Redis on 6379. Default `REDIS_URL=redis://redis:6379/0`.
+- Python virtual environment: use `backend/.venv` if running tools locally (outside Docker). Do not install Python packages globally.
+- Models directory: place valid `.gguf` and voice files in `./models`.
+- Optional: If GNU Make is installed (Windows via winget or other), you can run `make setup` and `make help`.
 
-### **GrokAssistMVP (Low Completeness)**:
-Minimal Grok-based AI implementation.
+The system automatically detects your hardware capabilities and selects the appropriate model profile:
+- **Light Profile**: For systems with limited resources
+- **Medium Profile**: For mid-range systems
+- **Heavy Profile**: For high-performance devices
+- **NPU Optimized**: For neural processing units
 
-  - tech:
-    - python script
-    - memory persistence
+## 🖥️ Desktop (Tauri)
 
-  - docs:
-    - project: [GrokAssistMVP/grok.md](GrokAssistMVP/grok.md)
+- Dev: run your Vite dev server (http://localhost:5173), then start Tauri from `frontend` to load the app window.
+- Build: `npm run build` in `frontend`, then package with Tauri to generate desktop installers.
 
-### **OpenAiAssist (Low Completeness)**:
-OpenAI API integration assistant.
+## ⚠️ Important Note on Development Process
 
-  - tech:
-    - python fastapi server
-    - templates
+During a previous development session, a mistake was made where Python dependencies were installed globally instead of using the project's virtual environment. This violated the project's requirement to use virtual environments for dependency isolation. The mistake has been corrected by removing the globally installed packages.
 
-  - docs:
-    - setup: [OpenAiAssist/run_assistant.py](OpenAiAssist/run_assistant.py)
+**Important**: Always ensure you are working within the project's virtual environment to maintain proper dependency isolation.
 
-### **OpenHands (Low Completeness)**:
-Experimental open-source coding assistant.
+## 📡 API Quick Reference
 
-  - tech:
-    - docker structure
+For full details, see: `docs/dev/api.md`
 
-  - docs:
-    - setup: [OpenHands/docker-compose.yaml](OpenHands/docker-compose.yaml)
+- Health
+  - GET `/api/v1/health/services`
+  - GET `/api/v1/health/models`
+- Models
+  - GET `/api/v1/models/all`
+  - GET `/api/v1/models/select?profile=medium&task_type=chat`
+- Chat
+  - POST `/api/v1/chat/send`
+  - GET  `/api/v1/chat/send/stream` (server-sent events)
+- Search
+  - POST `/api/v1/search/semantic`
+  - POST `/api/v1/search/unified`
+- Budget
+  - GET `/api/v1/budget/status`
+  - POST `/api/v1/budget/config`
+- Voice
+  - POST `/api/v1/voice/stt`, `/api/v1/voice/tts`, `/api/v1/voice/wake-word`, `/api/v1/voice/upload-audio`
+  - POST `/api/v1/voice/session` (one-shot voice pipeline)
 
-### **Aider (Low Completeness)**:
-AI coding assistant variations.
+## 🔎 More details for developers
 
-  - tech:
-    - python rust orchestrator
-    - runbook
+- Detailed status and readiness: `docs/dev/status.md`
+- Enhancements (curated backlog): `docs/dev/enhancements.md`
 
-  - docs:
-    - reference: [Aider/runbook.md](Aider/runbook.md)
+## 📞 Support
 
-### **WebApp/BoltAssist (Medium Completeness)**:
-Web-assisted AI for coding/chat.
-
-  - tech:
-    - nodejs backend
-    - react vite frontend
-    - docker
-    - bolt integration
-
-  - docs:
-    - core: [WebApp/BoltAssist/README.md](WebApp/BoltAssist/README.md)
-    - project: [WebApp/BoltAssist/bolt.md](WebApp/BoltAssist/bolt.md)
-
-### **WebApp/MgxAssist (Low-Medium Completeness)**:
-Alternative web AI assistant.
-
-  - tech:
-    - react vite setup
-    - minimal backend
-
-  - docs:
-    - core: [WebApp/MgxAssist/README.md](WebApp/MgxAssist/README.md)
-    - project: [WebApp/MgxAssist/mgx.md](WebApp/MgxAssist/mgx.md)
-
-## License
-
-This repository is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+For support, please open an issue on GitHub.

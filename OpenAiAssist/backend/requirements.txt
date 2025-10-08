@@ -1,9 +1,0 @@
-flask
-flask-socketio
-eventlet
-transformers
-torch
-sounddevice
-soundfile
-speechrecognition
-gtts

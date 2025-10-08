@@ -1,24 +1,17 @@
-# Top-level ignores for a clean public repo
+# Reduce Docker build context and avoid copying local artifacts
 
-# OS
+# OS/editor
 .DS_Store
 Thumbs.db
-
-# Editors/IDE
 .vscode/
 .idea/
-*.swp
 
 # Python
 backend/.venv/
 **/__pycache__/
-**/*.py[cod]
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-.coverage
-.coverage.*
-htmlcov/
 
 # Node/Frontend
 frontend/node_modules/
@@ -33,19 +26,13 @@ frontend/src-tauri/target/
 frontend/src-tauri/.cargo/
 frontend/src-tauri/target/release/bundle/
 
-# Build outputs (generic)
+# Build outputs
 build/
 dist/
 target/
 coverage/
 
-# Docker/Compose
-*.pid
-*.pid.lock
-*.log
-logs/
-
-# Data & models (do not commit large binaries or local data)
+# Data & models (kept out of images)
 models/
 models/**
 data/
@@ -53,7 +40,7 @@ storage/
 *.sqlite
 *.db
 
-# Secrets and env files (protect on push)
+# Secrets
 .env
 .env.*
 backend/.env
@@ -68,9 +55,3 @@ secrets.json
 # Redis dumps
 appendonly.aof
 dump.rdb
-
-# Generated assets
-*.wav
-*.mp3
-*.ogg
-*.opus
