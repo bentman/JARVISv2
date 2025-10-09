@@ -32,5 +32,6 @@ jobs:
         working-directory: ./backend
         env:
           DATABASE_URL: sqlite:///./data/test.db
+          PYTHONPATH: ${{ github.workspace }}/backend
         run: |
           pytest -q
