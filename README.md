@@ -26,12 +26,12 @@ A privacy-first, local-only AI assistant that runs entirely on your hardware. Cr
 - `powershell -NoProfile -ExecutionPolicy Bypass -File tests/smoke.ps1`
 
 ## Documentation (by audience)
-- Users: `docs/user/index.md` (getting started, voice, models)
-- Developers: `docs/dev/setup.md`, `docs/dev/api.md`, `docs/dev/operations.md`, `docs/dev/packaging.md`
-- **Production**: `docs/dev/production.md` (security, deployment, monitoring, backups)
-- Design/Architecture: `docs/design/system-design.md`, `docs/design/components.md`
-- AI Assistant Rules (for LLMs contributing here): `warp.md`
-- Requirements (read-only): `Project.md`
+- Users: [docs/user/index.md](docs/user/index.md) (getting started, voice, models)
+- Developers: [docs/dev/setup.md](docs/dev/setup.md), [docs/dev/api.md](docs/dev/api.md), [docs/dev/operations.md](docs/dev/operations.md), [docs/dev/packaging.md](docs/dev/packaging.md)
+- **Production**: [docs/dev/production.md](docs/dev/production.md) (security, deployment, monitoring, backups)
+- Design/Architecture: [docs/design/system-design.md](docs/design/system-design.md), [docs/design/components.md](docs/design/components.md)
+- AI Assistant Rules (for LLMs contributing here): [agent.md](agent.md)
+- Requirements (read-only): [Project.md](Project.md)
 
 ## Tech Stack
 Backend: FastAPI (Python), SQLite, FAISS, Redis, ONNX Runtime

@@ -1,6 +1,6 @@
 # AI Assistant Rules
 
-This file guides AI coding assistants contributing to this repository. It consolidates conventions, structure, and guardrails. Refer to Project.md for requirements (read-only).
+This file guides AI coding assistants contributing to this repository. It consolidates conventions, structure, and guardrails. Refer to [Project.md](Project.md) for requirements (read-only).
 
 ## Style & Conventions
 - Backend: Python with PEP 8
@@ -15,18 +15,18 @@ This file guides AI coding assistants contributing to this repository. It consol
 - Backend: `backend/app/`
   - `api/v1/endpoints/` feature routers (chat, hardware, memory, privacy, voice, models, budget, search, health)
   - `services/` (hardware_detector, model_router, memory_service, privacy_service, voice_service, cache_service, budget_service, vector_store, embedding_service)
-  - `models/` (database)
-  - `core/` (config)
+ - `models/` (database)
+ - `core/` (config)
 - Frontend: `frontend/` (React + Vite + optional Tauri)
-- Docs: `docs/` (user, dev, design), `warp.md` (this file)
-- Requirements: `Project.md` (read-only)
+- Docs: `docs/` (user, dev, design), `agent.md` (this file)
+- Requirements: [Project.md](Project.md) (read-only)
 
 ## Common Tasks
 - New API endpoint: add file under `backend/app/api/v1/endpoints/`, include in `api/v1/__init__.py`
 - New service: add under `backend/app/services/`, single responsibility
 - Frontend component: `frontend/src/`
 - Hardware/model routing: update `model_router.py` (discovery, selection)
-- Dev setup: follow `docs/dev/setup.md`; use Docker Compose and Makefile targets. Do not rely on missing or ad-hoc scripts.
+- Dev setup: follow [docs/dev/setup.md](docs/dev/setup.md); use Docker Compose and Makefile targets. Do not rely on missing or ad-hoc scripts.
 
 ## Implementation Guidelines
 - Research similar OSS patterns when adding features
@@ -49,7 +49,7 @@ This file guides AI coding assistants contributing to this repository. It consol
 - Makefile targets are cross-platform. On Windows, install GNU Make (e.g., via winget) or use the provided dev scripts if `make` is unavailable.
 
 ## Requirements Alignment
-- Always align with `Project.md`
+- Always align with [Project.md](Project.md)
 - Favor local-first processing; no cloud by default
 - Respect dependency isolation; do not install globally inside dev machines
 
@@ -57,14 +57,14 @@ This file guides AI coding assistants contributing to this repository. It consol
 
 - Status taxonomy (MUST use in outputs when describing features/code/docs):
   - ready-to-use: Verified with the Verification Checklist and evidence provided.
-  - partial: Some functionality works; important gaps remain; not production-ready.
+ - partial: Some functionality works; important gaps remain; not production-ready.
   - placeholder: Exists but does not implement the intended function.
   - planned: Not implemented.
 
-- Truthfulness: Never label a feature “ready-to-use” without presenting verification evidence (commands + results). If evidence is absent, default to partial/placeholder/planned.
+- Truthfulness: Never label a feature "ready-to-use" without presenting verification evidence (commands + results). If evidence is absent, default to partial/placeholder/planned.
 
 - Definition of Done (DoD) per capability (minimum):
-  - Chat: runnable inference binary in image; .gguf detected; /chat/send returns valid assistant response; budget enforcement and caching exercised.
+ - Chat: runnable inference binary in image; .gguf detected; /chat/send returns valid assistant response; budget enforcement and caching exercised.
   - Voice: wake-word detected; STT and TTS return outputs with bundled binaries; errors are actionable when voice model missing.
   - Memory: add/list/stats/semantic search work; export/import round-trip; referential integrity preserved or reported.
   - Privacy: classification + redaction work; data retention cleanup works; external calls gated by privacy level.
@@ -72,12 +72,12 @@ This file guides AI coding assistants contributing to this repository. It consol
   - Budget: status shows totals and limits; enforce blocks chat when exceeded; category-aware rate applied.
   - Deployment: docker compose up -d starts backend + Redis; health endpoints pass.
 
-- Verification Checklist (MUST run or request permission to run before “ready-to-use”):
+- Verification Checklist (MUST run or request permission to run before "ready-to-use"):
   - Build: docker compose build backend
   - Run: docker compose up -d
   - Health: GET /api/v1/health/services, /api/v1/health/models
   - Chat: POST /api/v1/chat/send with a sample prompt (with .gguf present)
-  - Memory: conversations/messages/semantic search
+ - Memory: conversations/messages/semantic search
   - Privacy: classify + cleanup
   - Search: semantic; unified (when enabled and redacted)
   - Budget: status; enforce 429 path
@@ -88,8 +88,8 @@ This file guides AI coding assistants contributing to this repository. It consol
   - Dev docs: partials allowed but must be labeled with status and gaps; link to DoD and checklist.
 
 - Task Protocol:
-  - Every task must include Scope, Acceptance Criteria, and Verification Steps.
-  - The assistant can’t claim completion without satisfying and verifying Acceptance Criteria.
+ - Every task must include Scope, Acceptance Criteria, and Verification Steps.
+  - The assistant can't claim completion without satisfying and verifying Acceptance Criteria.
 
 - Feature Flags:
   - Experimental or remote features default OFF.
@@ -97,6 +97,5 @@ This file guides AI coding assistants contributing to this repository. It consol
 
 - Standard Response Headers (prepend in assistant responses when applicable):
   - Status: <ready-to-use | partial | placeholder | planned>
-  - Evidence: <what checks ran / “not executed”>
+  - Evidence: <what checks ran / "not executed">
   - Next: <minimal steps to reach next status>
-
