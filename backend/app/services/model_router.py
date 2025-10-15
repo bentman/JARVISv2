@@ -96,13 +96,13 @@ class ModelRouter:
                 # Expected vs computed hash
                 computed = None
                 if filename + '.gguf' in expected_hashes:
-                    self.model_hashes[filename] = expected_hashes[filename + '.gguf']
+                    self.model_hashes[filename] = str(expected_hashes[filename + '.gguf']).lower()
                 else:
                     h = hashlib.sha256()
                     with open(file_path, 'rb') as f:
                         for chunk in iter(lambda: f.read(1024 * 1024), b''):
                             h.update(chunk)
-                    computed = h.hexdigest()
+                    computed = h.hexdigest().lower()
                     self.model_hashes[filename] = computed
                 # Simplified categorization based on filename
                 if any(tag in filename for tag in ["1b", "2b", "3b"]):
@@ -281,8 +281,8 @@ class ModelRouter:
             with open(model_path, 'rb') as f:
                 for chunk in iter(lambda: f.read(1024 * 1024), b''):
                     h.update(chunk)
-            current_hash = h.hexdigest()
-            if current_hash != expected_hash:
+            current_hash = h.hexdigest().lower()
+            if (expected_hash or '').lower() != current_hash:
                 raise Exception(f"Model file integrity check failed for {model_name}. Expected {expected_hash}, got {current_hash}.")
         
         return self._run_llama_inference(model_path, prompt, max_tokens)
@@ -302,8 +302,8 @@ class ModelRouter:
             with open(model_path, 'rb') as f:
                 for chunk in iter(lambda: f.read(1024 * 1024), b''):
                     h.update(chunk)
-            current_hash = h.hexdigest()
-            if current_hash != expected_hash:
+            current_hash = h.hexdigest().lower()
+            if (expected_hash or '').lower() != current_hash:
                 raise Exception(f"Model file integrity check failed for {model_name}. Expected {expected_hash}, got {current_hash}.")
         yield from self._run_llama_inference_stream(model_path, prompt, max_tokens)
 

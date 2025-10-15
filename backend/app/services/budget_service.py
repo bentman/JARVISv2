@@ -52,10 +52,12 @@ class BudgetService:
     def log_event(self, category: str, tokens_used: int, execution_time_sec: float, cost_per_token_usd: Optional[float] = None) -> Dict:
         # Prefer explicit override if provided; otherwise compute from category
         rate = cost_per_token_usd if cost_per_token_usd is not None else self.rate_for_category(category)
-        cost_usd = tokens_used * rate
+        # Ensure a minimal token accounting so extremely small outputs still impact budgets predictably
+        effective_tokens = max(int(tokens_used or 0), 50)
+        cost_usd = effective_tokens * rate
         event = BudgetEvent(
             category=category,
-            tokens_used=tokens_used,
+            tokens_used=effective_tokens,
             execution_time_sec=execution_time_sec,
             cost_usd=cost_usd,
         )

@@ -19,15 +19,6 @@ WORKDIR /opt/llama.cpp
 RUN cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF \
  && cmake --build build -j
 
-# -------- Piper build stage --------
-FROM debian:stable-slim AS piper_builder
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential cmake git ca-certificates libsndfile1 && rm -rf /var/lib/apt/lists/*
-WORKDIR /opt
-RUN git clone https://github.com/rhasspy/piper.git
-WORKDIR /opt/piper/src/cpp
-RUN cmake -B build -DCMAKE_BUILD_TYPE=Release \
- && cmake --build build -j
 
 # -------- Final runtime image --------
 FROM python:3.11-slim
@@ -52,8 +43,6 @@ COPY --from=whisper_builder /opt/whisper.cpp/build/ /opt/whisper/
 COPY --from=llama_builder /opt/llama.cpp/build/bin/ /usr/local/bin/
 COPY --from=llama_builder /opt/llama.cpp/build/ /opt/llama/
 
-# Copy piper binary
-COPY --from=piper_builder /opt/piper/src/cpp/build/piper /usr/local/bin/piper
 
 # Set library path and refresh cache
 ENV LD_LIBRARY_PATH="/usr/local/lib:/opt/whisper/bin:/opt/whisper/lib:/opt/llama/lib:/opt/llama/bin:/usr/local/bin:${LD_LIBRARY_PATH}"

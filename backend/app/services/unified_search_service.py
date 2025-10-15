@@ -12,6 +12,9 @@ class UnifiedSearchService:
     def __init__(self):
         self.enabled = settings.SEARCH_ENABLED
         self.providers: Dict[str, WebSearchProvider] = {}
+        # Default order (always initialize, even if not enabled)
+        self.providers_order = [p.strip() for p in getattr(settings, "SEARCH_PROVIDERS", "bing,google,tavily").split(",") if p.strip()]
+        
         if not self.enabled:
             return
         # Build providers based on configured keys
@@ -21,8 +24,6 @@ class UnifiedSearchService:
             self.providers["google"] = GoogleCSEProvider(settings.SEARCH_GOOGLE_API_KEY, settings.SEARCH_GOOGLE_CX)
         if settings.SEARCH_API_KEY:
             self.providers["tavily"] = TavilyProvider(settings.SEARCH_API_KEY)
-        # Default order
-        self.providers_order = [p.strip() for p in getattr(settings, "SEARCH_PROVIDERS", "bing,google,tavily").split(",") if p.strip()]
 
     def _can_escalate_llm(self) -> bool:
         if not settings.REMOTE_LLM_ENABLED:

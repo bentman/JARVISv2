@@ -1,0 +1,67 @@
+# Production Dockerfile with multi-stage build and security hardening
+FROM python:3.11-slim as builder
+
+# Build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    g++ \
+    cmake \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# Production stage
+FROM python:3.11-slim as production
+
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Install runtime dependencies only
+RUN apt-get update && apt-get install -y \
+    curl \
+    espeak-ng \
+    espeak-ng-data \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Copy Python packages from builder
+COPY --from=builder /root/.local /home/appuser/.local
+
+# Create necessary directories with proper permissions
+RUN mkdir -p /app /app/data /app/logs /models \
+    && chown -R appuser:appuser /app /models
+
+# Copy application code
+COPY --chown=appuser:appuser . /app
+
+# Switch to non-root user
+USER appuser
+
+# Set PATH for user-installed packages
+ENV PATH=/home/appuser/.local/bin:$PATH
+ENV PYTHONPATH=/app
+
+WORKDIR /app
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/api/v1/health/services || exit 1
+
+# Production server with gunicorn
+CMD ["gunicorn", "app.main:app", \
+     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--workers", "2", \
+     "--worker-connections", "1000", \
+     "--max-requests", "1000", \
+     "--max-requests-jitter", "100", \
+     "--preload", \
+     "--bind", "0.0.0.0:8000", \
+     "--timeout", "120", \
+     "--keepalive", "2", \
+     "--log-level", "info", \
+     "--access-logfile", "/app/logs/access.log", \
+     "--error-logfile", "/app/logs/error.log"]

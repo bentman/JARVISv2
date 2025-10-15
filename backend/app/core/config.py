@@ -1,11 +1,13 @@
 from pydantic_settings import BaseSettings
 from typing import List, Optional
+import secrets
+import os
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Local AI Assistant"
     VERSION: str = "0.1.0"
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = "your-secret-key-here"
+    SECRET_KEY: str = os.getenv("SECRET_KEY", secrets.token_urlsafe(32))
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
@@ -39,11 +41,11 @@ class Settings(BaseSettings):
     COST_PER_TOKEN_USD: float = 0.0  # local inference cost; default 0 for local-only
 
     # Privacy
-    PRIVACY_SALT: str = "local_ai_salt"
+    PRIVACY_SALT: str = os.getenv("PRIVACY_SALT", secrets.token_urlsafe(16))
     PRIVACY_DEFAULT_LEVEL: str = "local_only"  # local_only | balanced | performance
     PRIVACY_REDACT_AGGRESSIVENESS: str = "standard"  # standard | strict
     PRIVACY_RETENTION_DAYS: int = 30
-    PRIVACY_ENCRYPT_AT_REST: bool = False
+    PRIVACY_ENCRYPT_AT_REST: bool = True
 
     # Unified search (opt-in)
     SEARCH_ENABLED: bool = False

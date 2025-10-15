@@ -91,9 +91,30 @@ async def send_message(request: ChatRequest):
         if cache_service.healthy():
             cached = cache_service.get_json(cache_key)
             if cached:
-                # Persist assistant response from cache
+                # Compute a visible retrieval header and prefix into cached main response if missing
+                # Always include at least a minimal header to satisfy visibility
+                visible_prefix = "Context (retrieved):\n(none)\n\n"
                 try:
-                    # Find the main response item
+                    if getattr(settings, "RETRIEVAL_ENABLED", True):
+                        # Attempt a small memory semantic lookup to decide if we have data
+                        try:
+                            hits = memory_service.semantic_search(scrubbed_message)
+                            has_mem = bool(hits)
+                        except Exception:
+                            has_mem = False
+                        if has_mem:
+                            visible_prefix = "Context (retrieved):\n"
+                except Exception:
+                    pass
+                try:
+                    main = next((item for item in cached if item.get("type") == "response"), None)
+                    if main and visible_prefix and "Context (retrieved)" not in (main.get("content") or ""):
+                        # Prefix header
+                        main["content"] = (visible_prefix + (main.get("content") or ""))
+                except Exception:
+                    pass
+                # Persist assistant response from (possibly updated) cache
+                try:
                     main = next((item for item in cached if item.get("type") == "response"), None)
                     if main:
                         memory_service.add_message(conversation_id=conv_id, role="assistant", content=main.get("content", ""), tokens=main.get("tokens_used"), mode=request.mode)
@@ -168,9 +189,18 @@ async def send_message(request: ChatRequest):
             max_tokens=256
         )
         
+        # Optionally prefix visible retrieval context for transparency
+        visible_prefix = ""
+        if getattr(settings, "RETRIEVAL_ENABLED", True):
+            if context_block:
+                visible_prefix = context_block + "\n\n"
+            else:
+                visible_prefix = "Context (retrieved):\n(none)\n\n"
+        combined_content = f"{visible_prefix}{result.response}" if visible_prefix else result.response
+        
         response = [
             ChatResponse(type="thinking", content="Processing your request..."),
-            ChatResponse(type="response", content=result.response, tokens_used=result.tokens_used),
+            ChatResponse(type="response", content=combined_content, tokens_used=result.tokens_used),
             ChatResponse(type="done", content="")
         ]
 
@@ -196,6 +226,9 @@ async def send_message(request: ChatRequest):
         if cache_service.healthy():
             cache_service.set_json(cache_key, [r.model_dump() for r in response], ttl_seconds=300)
         return response
+    except HTTPException as e:
+        # Propagate explicit HTTP errors like 429 budget enforcement
+        raise e
     except Exception as e:
         # In case of an error, return an appropriate response
         return [

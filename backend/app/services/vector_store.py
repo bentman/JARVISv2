@@ -29,6 +29,10 @@ class VectorStore:
     def _create_index(self) -> faiss.IndexFlatIP:
         index = faiss.IndexFlatIP(self.dim)
         return index
+    
+    def _create_index_for_dim(self, dim: int) -> faiss.IndexFlatIP:
+        """Create a new index for a specific dimension."""
+        return faiss.IndexFlatIP(dim)
 
     def _load(self) -> None:
         # Ensure data directory exists
@@ -60,6 +64,11 @@ class VectorStore:
         if not texts:
             return []
         vecs = embedding_service.embed_texts(texts)  # shape (n, dim)
+        
+        # Ensure index is created if needed and matches the embedding dimension
+        if self._index is None or self._index.d != vecs.shape[1]:
+            self._index = self._create_index_for_dim(vecs.shape[1])
+        
         # FAISS IndexFlatIP expects float32 and works best with normalized vectors
         ids_start = self._index.ntotal if self._index is not None else 0
         self._index.add(vecs)

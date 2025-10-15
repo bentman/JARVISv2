@@ -16,9 +16,9 @@ This project does not include model files. Use the provided scripts to download 
 ## Usage
 
 - Windows (PowerShell):
-  - `./scripts/get-models.ps1`
+  - `./scripts/setup/get-models.ps1`
 - macOS/Linux (bash):
-  - `./scripts/get-models.sh`
+  - `./scripts/setup/get-models.sh`
 
 The scripts download model files to `./models` and create `./models/checksums.json` with SHA256 hashes.
 

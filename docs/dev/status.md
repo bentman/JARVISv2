@@ -61,9 +61,9 @@ The project is ready for immediate use in development environments. All core ser
 2. **Setup**
    ```bash
    # Download models
-   ./scripts/get-models.sh  # Linux/macOS
+   ./scripts/setup/get-models.sh  # Linux/macOS
    # or
-   ./scripts/get-models.ps1  # Windows
+   ./scripts/setup/get-models.ps1  # Windows
    
    # Start services
    docker compose up -d
@@ -75,9 +75,9 @@ The project is ready for immediate use in development environments. All core ser
 3. **Development**
    ```bash
    # One-command startup
-   ./scripts/dev.sh  # Linux/macOS
+   ./scripts/dev/dev.sh  # Linux/macOS
    # or
-   ./scripts/dev.ps1  # Windows
+   ./scripts/dev/dev.ps1  # Windows
    ```
 
 ### 🛠 Next Steps

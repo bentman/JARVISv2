@@ -43,5 +43,5 @@ FYI: By default, voice TTS uses Piper when a voice `.onnx` exists under `./model
 - Privacy cleanup: to remove older messages, call `POST /api/v1/privacy/cleanup` after setting `data_retention_days` in `/api/v1/privacy/settings`.
 
 ## Smoke test
-- Windows (PowerShell): `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/smoke.ps1`
+- Windows (PowerShell): `powershell -NoProfile -ExecutionPolicy Bypass -File tests/smoke.ps1`
 - The script validates health, chat (including streaming), retrieval, privacy redaction, budget enforcement (429), caching speedup, persistence across restarts, and voice STT/TTS fallbacks.

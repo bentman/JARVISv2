@@ -72,8 +72,8 @@ See `docs/dev/operations.md` for full environment variable reference including:
 ## Models: download and verify
 - Download: `./scripts/get-models.ps1` (Windows) or `./scripts/get-models.sh` (macOS/Linux)
 - Verify hashes (optional but recommended):
-  - Windows: `pwsh -NoProfile -File scripts/verify-models.ps1`
-  - macOS/Linux: `./scripts/verify-models.sh`
+  - Windows: `pwsh -NoProfile -File tests/verify-models.ps1`
+  - macOS/Linux: `./tests/verify-models.sh`
 
 ## Tests and CI
 - `cd backend && pytest -q`
