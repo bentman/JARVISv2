@@ -1,0 +1,121 @@
+# Local AI Assistant Development Makefile
+
+# Variables
+PROJECT_NAME = jarvisv2
+BACKEND_DIR = backend
+FRONTEND_DIR = frontend
+
+# Default target
+.PHONY: help
+help:
+	@echo "Local AI Assistant - Development Commands"
+	@echo ""
+	@echo "Usage:"
+	@echo "  make -f Makefile.dev setup-dev       Install all development dependencies"
+	@echo "  make -f Makefile.dev backend-dev     Start backend in development mode"
+	@echo " make -f Makefile.dev frontend-dev    Start frontend in development mode"
+	@echo "  make -f Makefile.dev dev             Start both backend and frontend in development mode"
+	@echo "  make -f Makefile.dev backend-build   Build backend Docker image (dev)"
+	@echo "  make -f Makefile.dev test-dev        Run development tests"
+	@echo " make -f Makefile.dev run-dev         Run development services with docker-compose.dev.yml"
+	@echo "  make -f Makefile.dev clean-dev       Clean development build artifacts"
+	@echo "  make -f Makefile.dev logs-dev        View development logs"
+	@echo " make -f Makefile.dev down-dev        Stop development services"
+
+# Development setup
+.PHONY: setup-dev
+setup-dev:
+	@echo "Setting up development environment..."
+	# Create virtual environment for backend
+	python3 -m venv $(BACKEND_DIR)/.venv
+	# Activate virtual environment and install backend dependencies
+	# On Windows: $(BACKEND_DIR)\\.venv\\Scripts\\activate.bat && pip install -r $(BACKEND_DIR)/requirements.txt
+	# On Unix: source $(BACKEND_DIR)/.venv/bin/activate && pip install -r $(BACKEND_DIR)/requirements.txt
+	if [ -f $(BACKEND_DIR)/.venv/bin/activate ]; then \
+		source $(BACKEND_DIR)/.venv/bin/activate && pip install -r $(BACKEND_DIR)/requirements.txt; \
+	else \
+		$(BACKEND_DIR)\\.venv\\Scripts\\activate.bat && pip install -r $(BACKEND_DIR)/requirements.txt; \
+	fi
+	cd $(FRONTEND_DIR) && npm install
+	@echo "Development setup complete!"
+
+# Backend development
+.PHONY: backend-dev
+backend-dev:
+	@echo "Starting backend in development mode..."
+	# Activate virtual environment and start backend server
+	# On Windows: $(BACKEND_DIR)\.venv\Scripts\activate.bat && uvicorn app.main:app --reload
+	# On Unix: source $(BACKEND_DIR)/.venv/bin/activate && uvicorn app.main:app --reload
+	if [ -f $(BACKEND_DIR)/.venv/bin/activate ]; then \
+		source $(BACKEND_DIR)/.venv/bin/activate && uvicorn app.main:app --reload; \
+	else \
+		$(BACKEND_DIR)\.venv\Scripts\activate.bat && uvicorn app.main:app --reload; \
+	fi
+
+# Frontend development
+.PHONY: frontend-dev
+frontend-dev:
+	@echo "Starting frontend in development mode..."
+	cd $(FRONTEND_DIR) && npm run dev
+
+# Both development
+.PHONY: dev
+dev:
+	@echo "Starting both backend and frontend in development mode..."
+	@echo "Starting backend..."
+	# Activate virtual environment and start backend server
+	# On Windows: $(BACKEND_DIR)\.venv\Scripts\activate.bat && uvicorn app.main:app --reload &
+	# On Unix: source $(BACKEND_DIR)/.venv/bin/activate && uvicorn app.main:app --reload &
+	if [ -f $(BACKEND_DIR)/.venv/bin/activate ]; then \
+		source $(BACKEND_DIR)/.venv/bin/activate && uvicorn app.main:app --reload & \
+	else \
+		$(BACKEND_DIR)\.venv\Scripts\activate.bat && uvicorn app.main:app --reload & \
+	fi
+	@echo "Starting frontend..."
+	cd $(FRONTEND_DIR) && npm run dev
+
+# Run development services using docker-compose.dev.yml
+.PHONY: run-dev
+run-dev:
+	@echo "Starting development services with docker-compose.dev.yml..."
+	docker compose -f docker-compose.dev.yml up -d
+	@echo "Development services started. Use 'make -f Makefile.dev logs-dev' to view logs."
+
+# Backend build (development version)
+.PHONY: backend-build
+backend-build:
+	@echo "Building backend Docker image (development)..."
+	cd $(BACKEND_DIR) && docker build -t $(PROJECT_NAME)-backend . -f Dockerfile.dev
+
+# Development tests
+.PHONY: test-dev
+test-dev:
+	@echo "Running development tests..."
+	# Activate virtual environment and run backend tests
+	# On Windows: $(BACKEND_DIR)\.venv\Scripts\activate.bat && python -m pytest tests/
+	# On Unix: source $(BACKEND_DIR)/.venv/bin/activate && python -m pytest tests/
+	if [ -f $(BACKEND_DIR)/.venv/bin/activate ]; then \
+		source $(BACKEND_DIR)/.venv/bin/activate && python -m pytest tests/; \
+	else \
+		$(BACKEND_DIR)\.venv\Scripts\activate.bat && python -m pytest tests/; \
+	fi
+
+# View development logs
+.PHONY: logs-dev
+logs-dev:
+	@echo "Viewing development logs..."
+	docker compose -f docker-compose.dev.yml logs -f
+
+# Stop development services
+.PHONY: down-dev
+down-dev:
+	@echo "Stopping development services..."
+	docker compose -f docker-compose.dev.yml down
+
+# Clean development artifacts
+.PHONY: clean-dev
+clean-dev:
+	@echo "Cleaning development build artifacts..."
+	cd $(BACKEND_DIR) && rm -rf __pycache__ *.pyc
+	cd $(FRONTEND_DIR) && rm -rf node_modules/.cache
+	@echo "Clean complete!"

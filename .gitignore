@@ -1,0 +1,222 @@
+# =============================================================================
+# .gitignore - Clean repository with only source code and build/dev/maint files
+# =============================================================================
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.viminfo
+.sublime-workspace
+.sublime-project
+*.code-workspace
+
+# =============================================================================
+# PYTHON/BACKEND ARTIFACTS
+# =============================================================================
+
+# Virtual environments
+backend/.venv/
+backend/venv/
+backend/env/
+.venv/
+venv/
+env/
+
+# Python cache and compiled files
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+*.so
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+
+# =============================================================================
+# FRONTEND/TAURI ARTIFACTS  
+# =============================================================================
+
+# Node.js dependencies
+frontend/node_modules/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+.yarn/
+
+# Build outputs
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/.parcel-cache/
+frontend/.turbo/
+frontend/.cache/
+frontend/.nuxt/
+frontend/.output/
+frontend/out/
+
+# Rust/Tauri
+frontend/src-tauri/target/
+frontend/src-tauri/.cargo/
+frontend/src-tauri/Cargo.lock
+frontend/src-tauri/target/release/bundle/
+
+# =============================================================================
+# APPLICATION RUNTIME DATA (Never commit)
+# =============================================================================
+
+# Databases and data files
+data/
+data/**
+storage/
+storage/**
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# AI Models and weights (large binaries)
+models/*
+!models/.gitkeep
+*.gguf
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.pb
+
+# Vector indices and embeddings
+*.index
+*.faiss
+vector_meta.json
+
+# Generated audio/media files
+*.wav
+*.mp3
+*.ogg
+*.opus
+*.flac
+*.m4a
+*.aac
+tts_*.wav
+*.mp4
+*.avi
+*.mov
+*.webm
+
+# =============================================================================
+# LOGS AND TEMPORARY FILES
+# =============================================================================
+
+# Application logs
+logs/
+logs/**
+*.log
+*.log.*
+*.out
+*.err
+
+# Process and lock files
+*.pid
+*.pid.lock
+*.lock
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.bak
+*.backup
+*~
+
+# =============================================================================
+# SECRETS AND CONFIGURATION
+# =============================================================================
+
+# Environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+!.env_example
+!.env.prod.example
+backend/.env
+frontend/.env
+.envrc
+
+# Secret files
+secrets/
+secrets.json
+config.secret.json
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+*.keystore
+*.jks
+
+# =============================================================================
+# BUILD AND DEPLOYMENT ARTIFACTS
+# =============================================================================
+
+# Generic build outputs
+build/
+dist/
+target/
+out/
+coverage/
+.nyc_output/
+
+# Docker artifacts (keep Dockerfile, ignore runtime)
+.docker/
+docker-data/
+
+# Redis data
+appendonly.aof
+dump.rdb
+redis-data/
+
+# =============================================================================
+# TEST RESULTS AND REPORTS (Generated)
+# =============================================================================
+
+# Test output files
+test-results/
+test-output/
+test_results.md
+smoke_results.txt
+
+# Generated reports
+test-report.md
+test-plan.yaml
+
+# Backup files from test operations
+*.md.bak
+*.yaml.bak

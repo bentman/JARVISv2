@@ -1,0 +1,11 @@
+# Models Directory
+
+This directory is for AI model files (.gguf) and voice models (.onnx).
+
+Models are not included in the repository due to size. 
+Use the setup scripts to download required models:
+
+Windows: ./scripts/setup/get-models.ps1
+macOS/Linux: ./scripts/setup/get-models.sh
+
+Models will be downloaded to this directory and verified with checksums.json.
