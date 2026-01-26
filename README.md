@@ -1,9 +1,13 @@
-# Local AI Assistant
-
-A privacy-first, local-only AI assistant that runs entirely on your hardware. Cross-platform (Windows/macOS/Linux), with chat, voice, and semantic search — all processed locally by default.
+# JARVISv2 - Local AI Assistant
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Platforms](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#)
+![status: inactive](https://img.shields.io/badge/Status-No%20Longer%20Maintained-red)
+![successor](https://img.shields.io/badge/Successor-JARVISv2-blue)
+
+> This project has evolved and is now succeeded by [**JARVISv3**](https://github.com/bentman/JARVISv3)
+
+- A privacy-first, local-only AI assistant that runs entirely on your hardware. 
+- Cross-platform (Windows/macOS/Linux), with chat, voice, and semantic search — all processed locally by default.
 
 ## Overview
 - Local inference: Llama/Mistral (GGUF), Whisper STT, Piper TTS (fallback to espeak-ng)
