@@ -1,7 +1,7 @@
 # J.A.R.V.I.S. AI Local Assistant (JARVISv2)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Status: Inactive](https://img.shields.io/badge/Status-No%20Longer%20Maintained-red)
+[![Status: Inactive](https://img.shields.io/badge/Status-No%20Longer%20Maintained-red)](#)
 [![Successor: JARVISv3](https://img.shields.io/badge/Successor-JARVISv3-blue)](https://github.com/bentman/JARVISv3)
 
 > This project has evolved and is now succeeded by [**JARVISv3**](https://github.com/bentman/JARVISv3)
