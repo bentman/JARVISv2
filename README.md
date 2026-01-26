@@ -1,4 +1,5 @@
 # J.A.R.V.I.S. AI Local Assistant (JARVISv2)
+## Just Almost Real Viable Intelligent System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status: Inactive](https://img.shields.io/badge/Status-No%20Longer%20Maintained-red)](#)
@@ -6,8 +7,8 @@
 
 > This project has evolved and is now succeeded by [**JARVISv3**](https://github.com/bentman/JARVISv3)
 
-- A privacy-first, local-only AI assistant that runs entirely on your hardware. 
-- Cross-platform (Windows/macOS/Linux), with chat, voice, and semantic search — all processed locally by default.
+- The first version that felt like it might become something. 
+- Still fragile, still messy, but finally showing signs of real capability.
 
 ## Overview
 - Local inference: Llama/Mistral (GGUF), Whisper STT, Piper TTS (fallback to espeak-ng)
