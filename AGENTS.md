@@ -60,7 +60,7 @@ This file guides AI coding assistants contributing to this repository. It consol
 ## Git safety
 
 Never run destructive git commands without explicit approval:
-- `git restore`, `git reset`, `git clean`, `git rebase`, history rewrites
+- `git restore`, `git reset`, `git clean`, `git rebase`, history rewrites, etc.
 
 If rollback is requested, propose the safest approach based on whether changes are committed or uncommitted.
 
