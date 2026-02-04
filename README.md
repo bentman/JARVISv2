@@ -5,10 +5,12 @@
 [![Status: Semi-Active](https://img.shields.io/badge/Status-Reactivated-green)](#)
 
 ## Overview
-- Local inference: Llama/Mistral (GGUF), Whisper STT, Piper TTS (fallback to espeak-ng)
-- Hardware-aware routing (CPU/GPU/NPU via onnxruntime providers)
+- Local model execution via GGUF + llama.cpp path discovery; voice via Whisper STT and Piper TTS (fallback to espeak-ng)
+- Hardware-aware routing (CPU/GPU/NPU detection via onnxruntime providers)
 - Memory with FAISS vector search, Redis caching, privacy redaction/encryption
-- Optional unified web search and LLM escalation (off by default)
+- Optional unified web search and LLM escalation (off by default; requires config)
+[Adjusted model names to match scripts/get-models.* and backend/services/model_router.py]
+[Confirmed optional web search via backend/app/services/unified_search_service.py; disabled by default in backend/app/core/config.py]
 
 ## Quick Start
 1) Download models (one time)
@@ -21,21 +23,24 @@
 
 3) For development workflows, you can also use:
 - `make setup` - Set up development environment (creates virtual environment, installs deps)
-- `make dev` - Start both backend and frontend in development mode
+- `make -f Makefile.dev dev` - Start backend + frontend dev servers
 - `make` - Show all available targets
+[Replaced make dev with Makefile.dev dev — Makefile uses npm run tauri dev, which is not defined in frontend/package.json]
 
 4) Launch UI (dev)
 - `cd frontend && npm install && npm run dev` → http://localhost:5173
 
-5) Run smoke test (Windows)
-- `powershell -NoProfile -ExecutionPolicy Bypass -File tests/smoke.ps1`
+5) Run smoke test
+- Windows: `powershell -NoProfile -ExecutionPolicy Bypass -File tests/smoke.ps1`
+- macOS/Linux: `./tests/smoke.sh`
+[Added smoke.sh command — tests/smoke.sh exists]
 
 ## Documentation
 - **User Guide**: [docs/user-guide.md](docs/user-guide.md) (getting started, voice, models, troubleshooting)
-- **AI Assistant Rules** (for LLMs contributing here): [agent.md](agent.md)
 - **Requirements** (read-only): [Project.md](Project.md)
 - **Script Reorganization**: [docs/script-reorganization.md](docs/script-reorganization.md) (details on script consolidation)
 - **Development Tools**: [scripts/devtools-windows.md](scripts/devtools-windows.md) (Windows) and [scripts/devtools-linux.md](scripts/devtools-linux.md) (Linux) comprehensive setup guides
+[Removed AGENTS.md link — file not present in repo]
 
 ## Script Organization
 The project uses a consolidated script approach for simplicity:
@@ -60,9 +65,11 @@ For testing the application, we provide comprehensive test suites:
 - **Consolidated runner**: [tests/run-all-tests.ps1](tests/run-all-tests.ps1) / [tests/run-all-tests.sh](tests/run-all-tests.sh) - Execute all test suites in sequence
 
 ## Tech Stack
-Backend: FastAPI (Python), SQLite, FAISS, Redis, ONNX Runtime
-Frontend: Tauri (Rust) + React + Tailwind CSS
-Models: Llama 3.2, Mistral 7B, Whisper, Piper (CLI in backend image)
+Backend: FastAPI (Python), SQLModel/SQLite, FAISS, Redis, ONNX Runtime
+Frontend: React + Vite + Tailwind CSS
+Desktop shell: Tauri (Rust)
+Models/tools (external): llama.cpp executable, Whisper STT, Piper TTS (downloaded via scripts)
+[Adjusted model/tool list to reflect scripts/get-models.* and backend/app/services/voice_service.py]
 
 ## License
 MIT — see [LICENSE](LICENSE).
