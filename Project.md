@@ -245,3 +245,51 @@ Clean, intuitive layout featuring:
 - Desktop application with platform-specific optimizations
 - Comprehensive testing and validation suite
 - Clear documentation and maintenance procedures
+
+```
+.
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── v1/
+│   │   │       └── endpoints/
+│   │   ├── core/
+│   │   ├── models/
+│   │   └── services/
+│   ├── data/
+│   ├── tests/
+│   ├── Dockerfile
+│   ├── Dockerfile.dev
+│   ├── requirements.txt
+│   └── backend_requirements_marker.txt
+├── docs/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   └── services/
+│   ├── src-tauri/
+│   │   └── src/
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   ├── tsconfig.json
+│   └── vite.config.ts
+├── models/
+├── scripts/
+├── tests/
+├── .dockerignore
+├── .env.example
+├── .env.dev.example
+├── .gitignore
+├── CHANGE_LOG.md
+├── docker-compose.yml
+├── docker-compose.dev.yml
+├── LICENSE
+├── Makefile
+├── Makefile.dev
+├── Project.md
+├── README.md
+└── SYSTEM_INVENTORY.md
+```
