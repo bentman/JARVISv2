@@ -57,6 +57,13 @@ This file guides AI coding assistants contributing to this repository. It consol
 - Development workflow: During active development, make changes using the development configuration which includes volume mounts for live reloading and development-optimized settings. When development milestones are completed and tested, ensure the changes work in both development and production configurations before committing. Always test changes in production configuration before merging to main branch.
 - Environment configuration: For production deployments, copy `.env.example` to `.env` and configure with production values. For development, copy `.env.dev.example` to `.env` and configure with development values.
 
+## Git safety
+
+Never run destructive git commands without explicit approval:
+- `git restore`, `git reset`, `git clean`, `git rebase`, history rewrites
+
+If rollback is requested, propose the safest approach based on whether changes are committed or uncommitted.
+
 ## Requirements Alignment
 - Always align with [Project.md](Project.md)
 - Favor local-first processing; no cloud by default
