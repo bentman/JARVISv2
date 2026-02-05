@@ -1,0 +1,119 @@
+# Production Dockerfile with multi-stage build and security hardening
+
+# -------- Whisper.cpp build stage --------
+FROM debian:stable-slim AS whisper_builder
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake git ca-certificates && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt
+RUN git clone https://github.com/ggerganov/whisper.cpp.git
+WORKDIR /opt/whisper.cpp
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release \
+ && cmake --build build -j
+
+
+# -------- llama.cpp build stage --------
+FROM debian:stable-slim AS llama_builder
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake git ca-certificates && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt
+RUN git clone https://github.com/ggerganov/llama.cpp.git
+WORKDIR /opt/llama.cpp
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF \
+ && cmake --build build -j
+
+
+# -------- Piper TTS build stage --------
+FROM debian:stable-slim AS piper_builder
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake git ca-certificates && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt
+RUN git clone https://github.com/rhasspy/piper.git
+WORKDIR /opt/piper
+# Build Piper C++ inference engine
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release \
+ && cmake --build build -j
+
+
+# -------- Python dependencies builder --------
+FROM python:3.11-slim as python_builder
+
+# Build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    g++ \
+    cmake \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# -------- Production runtime stage --------
+FROM python:3.11-slim as production
+
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Install runtime dependencies only
+RUN apt-get update && apt-get install -y \
+    curl \
+    libsndfile1 \
+    espeak-ng \
+    espeak-ng-data \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Copy AI model executables and libraries from build stages
+COPY --from=whisper_builder /opt/whisper.cpp/build/bin/whisper-cli /usr/local/bin/whisper
+COPY --from=whisper_builder /opt/whisper.cpp/build/*.so* /usr/local/lib/
+COPY --from=whisper_builder /opt/whisper.cpp/build/ /opt/whisper/
+
+COPY --from=llama_builder /opt/llama.cpp/build/bin/ /usr/local/bin/
+COPY --from=llama_builder /opt/llama.cpp/build/ /opt/llama/
+
+COPY --from=piper_builder /opt/piper/build/piper /usr/local/bin/piper
+COPY --from=piper_builder /opt/piper/build/ /opt/piper_build/
+
+# Set library path and refresh cache
+ENV LD_LIBRARY_PATH="/usr/local/lib:/opt/whisper/bin:/opt/whisper/lib:/opt/llama/lib:/opt/llama/bin:/opt/piper_build/pi/lib:/usr/local/bin:${LD_LIBRARY_PATH}"
+RUN ldconfig
+
+# Copy Python packages from builder
+COPY --from=python_builder /root/.local /home/appuser/.local
+
+# Create necessary directories with proper permissions
+RUN mkdir -p /app /app/data /app/logs /models \
+    && chown -R appuser:appuser /app /models
+
+# Copy application code
+COPY --chown=appuser:appuser . /app
+
+# Switch to non-root user
+USER appuser
+
+# Set PATH for user-installed packages
+ENV PATH=/home/appuser/.local/bin:$PATH
+ENV PYTHONPATH=/app
+
+WORKDIR /app
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/api/v1/health/services || exit 1
+
+# Production server with gunicorn
+CMD ["gunicorn", "app.main:app", \
+     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--workers", "2", \
+     "--worker-connections", "1000", \
+     "--max-requests", "1000", \
+     "--max-requests-jitter", "100", \
+     "--preload", \
+     "--bind", "0.0.0.0:8000", \
+     "--timeout", "120", \
+     "--keep-alive", "2", \
+     "--log-level", "info", \
+     "--access-logfile", "/app/data/logs/access.log", \
+     "--error-logfile", "/app/data/logs/error.log"]
