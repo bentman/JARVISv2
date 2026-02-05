@@ -55,21 +55,23 @@ else {
 # Download LLM model if not present
 if (-Not (Test-Path $TllFile)) {
     Write-Host "Downloading $TllFile ..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri $TllUrl -OutFile $TllFile
+    Invoke-WebRequest -Uri $TllUrl -OutFile $TllFile -ErrorAction Stop
+    if (-Not (Test-Path $TllFile)) { throw "Download failed for $TllFile" }
     Write-Host "Successfully downloaded $TllFile" -ForegroundColor Green
 } else {
     Write-Host "$TllFile already exists, skipping download." -ForegroundColor Gray
 }
 
 # Piper English voice (common for both environments)
-$PiperUrl = "https://github.com/rhasspy/piper-voices/releases/download/en_US-amy-low/en_US-amy-low.onnx"
+$PiperUrl = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/low/en_US-amy-low.onnx"
 $PiperFile = "en_US-amy-low.onnx"
-$PiperJsonUrl = "https://github.com/rhasspy/piper-voices/releases/download/en_US-amy-low/en_US-amy-low.onnx.json"
+$PiperJsonUrl = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/low/en_US-amy-low.onnx.json"
 $PiperJsonFile = "en_US-amy-low.onnx.json"
 
 if (-Not (Test-Path $PiperFile)) {
     Write-Host "Downloading $PiperFile (TTS)..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri $PiperUrl -OutFile $PiperFile
+    Invoke-WebRequest -Uri $PiperUrl -OutFile $PiperFile -ErrorAction Stop
+    if (-Not (Test-Path $PiperFile)) { throw "Download failed for $PiperFile" }
     Write-Host "Successfully downloaded $PiperFile" -ForegroundColor Green
 } else {
     Write-Host "$PiperFile already exists, skipping download." -ForegroundColor Gray
@@ -77,7 +79,8 @@ if (-Not (Test-Path $PiperFile)) {
 
 if (-Not (Test-Path $PiperJsonFile)) {
     Write-Host "Downloading $PiperJsonFile (TTS Config)..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri $PiperJsonUrl -OutFile $PiperJsonFile
+    Invoke-WebRequest -Uri $PiperJsonUrl -OutFile $PiperJsonFile -ErrorAction Stop
+    if (-Not (Test-Path $PiperJsonFile)) { throw "Download failed for $PiperJsonFile" }
     Write-Host "Successfully downloaded $PiperJsonFile" -ForegroundColor Green
 } else {
     Write-Host "$PiperJsonFile already exists, skipping download." -ForegroundColor Gray
@@ -88,7 +91,8 @@ $WhisperUrl = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-ba
 $WhisperFile = "ggml-base.en.bin"
 if (-Not (Test-Path $WhisperFile)) {
     Write-Host "Downloading $WhisperFile (STT)..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri $WhisperUrl -OutFile $WhisperFile
+    Invoke-WebRequest -Uri $WhisperUrl -OutFile $WhisperFile -ErrorAction Stop
+    if (-Not (Test-Path $WhisperFile)) { throw "Download failed for $WhisperFile" }
     Write-Host "Successfully downloaded $WhisperFile" -ForegroundColor Green
 } else {
     Write-Host "$WhisperFile already exists, skipping download." -ForegroundColor Gray
@@ -101,7 +105,7 @@ Get-ChildItem -File | Where-Object { $_.Extension -in ".gguf", ".onnx", ".bin" }
     $sha = Get-FileHash -Algorithm SHA256 -Path $_.FullName
     $checks[$_.Name] = $sha.Hash
 }
-($checks | ConvertTo-Json -Depth 3) | Out-Item -FilePath "checksums.json" -Encoding utf8
+($checks | ConvertTo-Json -Depth 3) | Out-File -FilePath "checksums.json" -Encoding utf8
 Write-Host "Checksums written to checksums.json" -ForegroundColor Green
 
 Write-Host "Model download complete!" -ForegroundColor Green

@@ -21,6 +21,12 @@ Authoritative capability ledger. This is not a roadmap or config reference. Inve
 
 ## Inventory
 
+- Capability: **Docker alignment (dev/prod runtime parity)** — 2026-02-05 08:57
+  - State: Verified
+  - Location: `docker-compose.dev.yml`, `docker-compose.yml`, `backend/app/core/logging_config.py`
+  - Validation: `docker compose -f docker-compose.dev.yml ps`; `docker compose -f docker-compose.yml ps`
+  - Notes: App and gunicorn logs aligned to `/app/data/logs`; dev models mount set read-only.
+
 ## Observed Initial Inventory: 2026-02-04
 
 ### Backend (FastAPI)

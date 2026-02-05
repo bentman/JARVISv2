@@ -12,7 +12,6 @@ services:
     volumes:
       - ./models:/models:ro
       - data_volume:/app/data
-      - logs_volume:/app/logs
     environment:
       - ENV=production
       - DATABASE_URL=sqlite:///./data/local_ai.db
@@ -90,7 +89,5 @@ networks:
 volumes:
   data_volume:
     driver: local
-  logs_volume:
-    driver: local  
   redis_data:
     driver: local

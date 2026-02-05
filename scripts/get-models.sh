@@ -65,21 +65,21 @@ fi
 # Download LLM model if not present
 if [[ ! -f "$TLL_FILE" ]]; then
     echo "Downloading $TLL_FILE ..."
-    curl -L "$TLL_URL" -o "$TLL_FILE"
+    curl -fL "$TLL_URL" -o "$TLL_FILE"
     echo "Successfully downloaded $TLL_FILE"
 else
     echo "$TLL_FILE already exists, skipping download."
 fi
 
 # Piper English voice (common for both environments)
-PIPER_URL="https://github.com/rhasspy/piper-voices/releases/download/en_US-amy-low/en_US-amy-low.onnx"
+PIPER_URL="https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/low/en_US-amy-low.onnx"
 PIPER_FILE="en_US-amy-low.onnx"
-PIPER_JSON_URL="https://github.com/rhasspy/piper-voices/releases/download/en_US-amy-low/en_US-amy-low.onnx.json"
+PIPER_JSON_URL="https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/low/en_US-amy-low.onnx.json"
 PIPER_JSON_FILE="en_US-amy-low.onnx.json"
 
 if [[ ! -f "$PIPER_FILE" ]]; then
     echo "Downloading $PIPER_FILE (TTS)..."
-    curl -L "$PIPER_URL" -o "$PIPER_FILE"
+    curl -fL "$PIPER_URL" -o "$PIPER_FILE"
     echo "Successfully downloaded $PIPER_FILE"
 else
     echo "$PIPER_FILE already exists, skipping download."
@@ -87,7 +87,7 @@ fi
 
 if [[ ! -f "$PIPER_JSON_FILE" ]]; then
     echo "Downloading $PIPER_JSON_FILE (TTS Config)..."
-    curl -L "$PIPER_JSON_URL" -o "$PIPER_JSON_FILE"
+    curl -fL "$PIPER_JSON_URL" -o "$PIPER_JSON_FILE"
     echo "Successfully downloaded $PIPER_JSON_FILE"
 else
     echo "$PIPER_JSON_FILE already exists, skipping download."
@@ -98,7 +98,7 @@ WHISPER_URL="https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base
 WHISPER_FILE="ggml-base.en.bin"
 if [[ ! -f "$WHISPER_FILE" ]]; then
     echo "Downloading $WHISPER_FILE (STT)..."
-    curl -L "$WHISPER_URL" -o "$WHISPER_FILE"
+    curl -fL "$WHISPER_URL" -o "$WHISPER_FILE"
     echo "Successfully downloaded $WHISPER_FILE"
 else
     echo "$WHISPER_FILE already exists, skipping download."

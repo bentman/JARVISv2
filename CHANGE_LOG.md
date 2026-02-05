@@ -15,6 +15,15 @@
 
 ## Entries
 
+- 2026-02-05 08:57
+  - Summary: Docker alignment completed; app logs routed to `/app/data/logs`, dev models mount set read-only, and dev/prod runners verified healthy.
+  - Scope: backend/app/core/logging_config.py; docker-compose.dev.yml; docker-compose.yml
+  - Evidence: `docker compose -f docker-compose.dev.yml ps`; `docker compose -f docker-compose.yml ps`
+    ```text
+    jarvisv2-backend-1 ... Up ... (healthy)
+    jarvisv2-prod-backend-1 ... Up ... (healthy)
+    ```
+
 - 2026-02-04 07:25
   - Summary: CHANGE_LOG.md established
   - Scope: CHANGE_LOG.md

@@ -50,7 +50,6 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
-
 # -------- Production runtime stage --------
 FROM python:3.11-slim as production
 
@@ -114,7 +113,7 @@ CMD ["gunicorn", "app.main:app", \
      "--preload", \
      "--bind", "0.0.0.0:8000", \
      "--timeout", "120", \
-     "--keepalive", "2", \
+     "--keep-alive", "2", \
      "--log-level", "info", \
-     "--access-logfile", "/app/logs/access.log", \
-     "--error-logfile", "/app/logs/error.log"]
+     "--access-logfile", "/app/data/logs/access.log", \
+     "--error-logfile", "/app/data/logs/error.log"]

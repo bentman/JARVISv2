@@ -66,13 +66,13 @@ def setup_logging():
     # File handlers for production
     if os.getenv("ENV") == "production":
         # Error log
-        error_handler = logging.FileHandler("/app/logs/error.log")
+        error_handler = logging.FileHandler("/app/data/logs/error.log")
         error_handler.setLevel(logging.ERROR)
         error_handler.setFormatter(JSONFormatter())
         root_logger.addHandler(error_handler)
         
         # General log
-        info_handler = logging.FileHandler("/app/logs/app.log")
+        info_handler = logging.FileHandler("/app/data/logs/app.log")
         info_handler.setLevel(logging.INFO)
         info_handler.setFormatter(JSONFormatter())
         root_logger.addHandler(info_handler)
