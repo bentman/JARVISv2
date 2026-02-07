@@ -2,7 +2,10 @@
 ## Just Almost a Real Viable Intelligent System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Status: Semi-Active](https://img.shields.io/badge/Status-Reactivated-green)](#)
+[![Status: Reference](https://img.shields.io/badge/status-Reference-Orange)](#)
+[![Successor: JARVISv3](https://img.shields.io/badge/Successor-JARVISv3-blue)](https://github.com/bentman/JARVISv3)
+
+> This project has evolved and is now succeeded by [**JARVISv3**](https://github.com/bentman/JARVISv3)
 
 ## Overview
 - Local model execution via GGUF + llama.cpp path discovery; voice via Whisper STT and Piper TTS (fallback to espeak-ng)
