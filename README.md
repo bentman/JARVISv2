@@ -12,8 +12,6 @@
 - Hardware-aware routing (CPU/GPU/NPU detection via onnxruntime providers)
 - Memory with FAISS vector search, Redis caching, privacy redaction/encryption
 - Optional unified web search and LLM escalation (off by default; requires config)
-[Adjusted model names to match scripts/get-models.* and backend/services/model_router.py]
-[Confirmed optional web search via backend/app/services/unified_search_service.py; disabled by default in backend/app/core/config.py]
 
 ## Quick Start
 1) Download models (one time)
